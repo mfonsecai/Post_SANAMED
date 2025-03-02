@@ -107,6 +107,12 @@ def register():
             flash("El correo electrónico ya está registrado. Por favor, utiliza otro correo electrónico", "error")
             return render_template('register.html')
 
+        # Verificar si el número de documento ya está registrado
+        existing_document = Usuario.query.filter_by(numero_documento=numero_documento).first()
+        if existing_document:
+            flash("El número de documento ya se encuentra registrado", "error")
+            return render_template('register.html', error="El número de documento ya se encuentra registrado")
+
         # Crear un nuevo usuario
         nuevo_usuario = Usuario(
             nombre=nombre,
@@ -125,7 +131,8 @@ def register():
             return redirect(url_for('register'))
         except Exception as e:
             db.session.rollback()
-            error = "El número de documento ya se encuentra registrado"
+            print(f"Error al registrar usuario: {e}")  # Depuración
+            error = "Error al registrar el usuario. Por favor, inténtalo de nuevo."
             flash(error, "error")
             return render_template('register.html', error=error)
 

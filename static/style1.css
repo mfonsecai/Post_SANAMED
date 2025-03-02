@@ -134,13 +134,7 @@ select::placeholder {
     margin: 20px 0;
     
 }
-.alert {
 
-    background-color: #8DCB9E;
-    color: white;
-    padding: 13px;
-    cursor: pointer;
-}
 
 .closebtn:hover {
     color: black;
