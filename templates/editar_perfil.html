@@ -14,13 +14,10 @@
     <div class="menu-container">
         <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
         <div class="menu-dropdown" id="menu-dropdown">
-            <a href="{{ url_for('user_home') }}">Home</a>
-            <a href="{{ url_for('configuracion') }}">Configuración</a>
+            <a href="{{ url_for('user_home') if tipo_usuario == 'usuario' else url_for('profesional_home') if tipo_usuario == 'profesional' else url_for('admin_home') }}">Home</a>
             <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
-
         </div>
     </div>
-
 
     <div class="container">
         <h1 title="Editar perfil">Editar perfil</h1>
@@ -38,21 +35,20 @@
                 {% endwith %}
                 
                 <div class="form-group">
-                    
                     <label for="nombre">Nombre:</label>
-                    <input type="text" id="nombre" name="nombre" value="" required>
+                    <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}" required>
                 </div>
                 <div class="form-group">
                     <label for="numero_documento">Número de Documento:</label>
-                    <input type="text" id="numero_documento" name="numero_documento" value="" required>
+                    <input type="text" id="numero_documento" name="numero_documento" value="{{ usuario.numero_documento if tipo_usuario == 'usuario' else 'No aplica' }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="celular">Celular:</label>
-                    <input type="text" id="celular" name="celular" value="" required>
+                    <input type="text" id="celular" name="celular" value="{{ usuario.celular }}" required>
                 </div>
                 <div class="form-group">
                     <label for="correo">Correo:</label>
-                    <input type="email" id="correo" name="correo" value="" required>
+                    <input type="email" id="correo" name="correo" value="{{ usuario.correo }}" required>
                 </div>
                 <div>
                     <button type="submit">Guardar Cambios</button>
@@ -63,26 +59,23 @@
 
     <script>
         //menu
-            
-                document.addEventListener('DOMContentLoaded', function() {
-                    var menuToggle = document.getElementById('menu-toggle');
-                    var menuDropdown = document.getElementById('menu-dropdown');
-                
-                    menuToggle.addEventListener('click', function() {
-                        menuDropdown.classList.toggle('show');
-                    });
-                
-                    // Cerrar el menú si se hace clic fuera de él
-                    window.addEventListener('click', function(event) {
-                        if (!event.target.matches('.imagen-esquina')) {
-                            if (menuDropdown.classList.contains('show')) {
-                                menuDropdown.classList.remove('show');
-                            }
-                        }
-                    });
-                });
-    
-            
-        </script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var menuToggle = document.getElementById('menu-toggle');
+            var menuDropdown = document.getElementById('menu-dropdown');
+        
+            menuToggle.addEventListener('click', function() {
+                menuDropdown.classList.toggle('show');
+            });
+        
+            // Cerrar el menú si se hace clic fuera de él
+            window.addEventListener('click', function(event) {
+                if (!event.target.matches('.imagen-esquina')) {
+                    if (menuDropdown.classList.contains('show')) {
+                        menuDropdown.classList.remove('show');
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

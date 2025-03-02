@@ -72,7 +72,9 @@ def login():
 
         if user_data:
             session['logged_in'] = True
-            session['id_usuario'] = user_data.id_usuario if rol == 'usuario' else user_data.id_profesional if rol == 'profesional' else user_data.id_administrador
+            session['id_usuario'] = user_data.id_usuario if rol == 'usuario' else None
+            session['id_profesional'] = user_data.id_profesional if rol == 'profesional' else None
+            session['id_administrador'] = user_data.id_administrador if rol == 'admin' else None
             session['last_activity'] = datetime.now().isoformat()  # Agregar timestamp
 
             if rol == 'usuario':
@@ -83,7 +85,6 @@ def login():
                 return redirect(url_for('admin_home'))
         else:
             return render_template('index.html', error="Credenciales incorrectas")
-
 
 @app.route('/signup', methods=["GET", 'POST'])
 def register():
@@ -730,51 +731,57 @@ def configuracion():
 def editar_perfil():
     # Verificar si el usuario está logueado y la sesión es válida
     if 'logged_in' in session and session['logged_in']:
-        # Obtener el id del usuario desde la sesión
-        id_usuario = obtener_id_usuario_actual()
+        # Obtener el id del usuario, profesional o administrador desde la sesión
+        id_usuario = session.get('id_usuario')
+        id_profesional = session.get('id_profesional')
+        id_administrador = session.get('id_administrador')
+
+        # Determinar el tipo de usuario
+        if id_usuario:
+            usuario = Usuario.query.get(id_usuario)
+            tipo_usuario = 'usuario'
+        elif id_profesional:
+            usuario = Profesional.query.get(id_profesional)
+            tipo_usuario = 'profesional'
+        elif id_administrador:
+            usuario = Administrador.query.get(id_administrador)
+            tipo_usuario = 'administrador'
+        else:
+            flash("Usuario no encontrado.", "error")
+            return redirect(url_for('index'))
 
         # Si el método de la solicitud es POST, significa que el usuario está enviando datos para actualizar su perfil
         if request.method == 'POST':
             nombre = request.form['nombre']
-            numero_documento = request.form['numero_documento']
             celular = request.form['celular']
             correo = request.form['correo']
 
-            # Buscar el usuario por su ID
-            usuario = Usuario.query.get(id_usuario)
-            if usuario:
-                # Actualizar los datos del usuario
-                usuario.nombre = nombre
-                usuario.numero_documento = numero_documento
-                usuario.celular = celular
-                usuario.correo = correo
+            # Actualizar solo los campos permitidos
+            usuario.nombre = nombre
+            usuario.celular = celular
+            usuario.correo = correo
 
-                # Confirmar cambios en la base de datos
-                try:
-                    db.session.commit()
-                    flash("Perfil actualizado correctamente.", "success")
-                except Exception as e:
-                    db.session.rollback()
-                    flash(f"Error al actualizar el perfil: {str(e)}", "error")
-                
-                # Redirigir a la página de configuración después de guardar cambios
-                return redirect(url_for('configuracion'))
-            else:
-                flash("Usuario no encontrado.", "error")
-                return redirect(url_for('index'))
+            # Confirmar cambios en la base de datos
+            try:
+                db.session.commit()
+                flash("Perfil actualizado correctamente.", "success")
+            except Exception as e:
+                db.session.rollback()
+                flash(f"Error al actualizar el perfil: {str(e)}", "error")
+            
+            # Redirigir a la página de configuración después de guardar cambios
+            return redirect(url_for('editar_perfil'))
 
         # Si el método es GET, obtener los datos actuales del usuario desde la base de datos
-        usuario = Usuario.query.get(id_usuario)
         if usuario:
             # Renderizar la plantilla de editar perfil con los datos del usuario autenticado
-            return render_template('editar_perfil.html', usuario=usuario)
+            return render_template('editar_perfil.html', usuario=usuario, tipo_usuario=tipo_usuario)
         else:
             flash("Usuario no encontrado.", "error")
             return redirect(url_for('index'))
     else:
         # Si no está logueado, redirigir al inicio de sesión
         return redirect(url_for('index'))
-
 
 @app.route('/sobre_nosotros')
 @login_required
