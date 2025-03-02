@@ -1,0 +1,286 @@
+/* Reset básico */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: url("2392606046863777.jpeg") no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+  line-height: 1.6;
+}
+
+
+h1 {
+  text-align: center;
+  margin: 10px ; /* Ajusta el valor según sea necesario */
+  font-size: 2.5em;
+  color: #000000;
+  font-family: "Jomhuria", serif;}
+
+
+.container {
+  width: 1280px;
+  height: 732px;
+  background-color: rgb(255, 255, 255);
+  padding: 20px;
+  margin: 60px auto; /* Añade un margen superior para bajarlo */
+}
+
+
+.juegos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+  
+}
+
+.juego-cuadro {
+  width: 100%; /* Ancho total del contenedor */
+  max-width: 1200px; /* Ajusta el máximo ancho según tus necesidades */
+  height: auto; /* Altura automática para adaptarse al contenido */
+  max-height: 600px; /* Ajusta la altura máxima según tus necesidades */
+  margin: 20px auto; /* Centrado horizontal y espaciado alrededor */
+  padding: 20px; /* Espaciado interno */
+  border: 1px solid #ccc; /* Borde para distinguir el bloque */
+  border-radius: 10px; /* Bordes redondeados */
+  background-color: #f9f9f9; /* Color de fondo */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
+  overflow-y: auto; /* Permite desplazamiento si el contenido excede el alto máximo */
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+
+}
+
+
+
+
+.hidden {
+  display: none; /* Mantiene la clase existente */
+  
+}
+
+.juego-cuadro:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+p {
+  margin-bottom: 15px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.hidden {
+  display: none;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+select {
+  padding: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}
+
+#temporizador {
+  font-size: 1.2em;
+  margin-top: 20px;
+}
+
+#resultado {
+  margin-top: 20px;
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+
+.hidden {
+  display: none;
+}
+
+#preguntas-container {
+  margin-top: 20px;
+}
+
+
+.hidden {
+  display: none;
+}
+
+#juego-contenido {
+  margin-top: 20px;
+}
+
+#temporizador {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+
+
+.hidden {
+  display: none;
+}
+
+#circulo-respiracion {
+  width: 100px;
+  height: 100px;
+  margin: 20px auto;
+  border-radius: 50%;
+  background-color: #add8e6;
+  transform: scale(1);
+}
+
+#temporizador-respiracion {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#instruccion-respiracion {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+
+.juego-cuadro {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  background-color: #f0f8ff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+#jardin {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.flor {
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  background-color: #ffb6c1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 0.9em;
+  padding: 10px;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.flor p {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+
+.imagen-superior {
+  width: 100%;
+  height: auto;
+  max-height: 100px; /* Ajusta la altura máxima según tus necesidades */
+  display: block;
+  margin: 0 auto;
+}
+
+.imagen-superior {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px; /* Ajusta según el tamaño necesario */
+  object-fit: cover; /* Para que la imagen cubra toda el área */
+  z-index: -1; /* Para que el contenido esté por encima */
+}
+
+
+.imagen-esquina {
+  width: 60px; /* Tamaño pequeño */
+  height: auto;
+  position: absolute;
+  top: 14px; /* Ajusta según sea necesario */
+}
+
+.izquierda {
+  left: 100px; /* Esquina superior izquierda */
+}
+
+.derecha {
+  right: 100px; /* Esquina superior derecha */
+}
+
+
+
+.menu-container {
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  z-index: 1000;
+  width: 60px;
+}
+
+
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 60px;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.menu-dropdown a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.menu-dropdown a:hover {
+  background-color: #f1f1f1;
+}
+
+.show {
+  display: block;
+}

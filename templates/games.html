@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Juegos Educativos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style25.css') }}">
+</head>
+<body>
+    <h1 class="titulo-centrado">Herramientas y actividades</h1>
+    <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
+    <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
+
+    <div class="menu-container">
+        <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
+        <div class="menu-dropdown" id="menu-dropdown">
+            <a href="{{ url_for('user_home') }}">Home</a>
+            <a href="{{ url_for('configuracion') }}">Configuración</a>
+            <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+            <a href="{{ url_for('games') }}">Actividades</a>
+
+        </div>
+    </div>
+        
+
+   <!-- Contenedor principal para todos los juegos -->
+<div class="container" >
+    <div id="juegos" class="juegos-container">
+        <!-- Los juegos se cargarán aquí dinámicamente -->
+    </div>
+    
+    <!-- Juego de Meditación -->
+<div id="meditacion" class="juego-cuadro hidden">
+    <h2>Juego de Meditación</h2>
+    <p>Instrucciones: Este juego te guiará a través de un ejercicio de meditación. Elige la duración de tu meditación y presiona "Iniciar". Durante la meditación, puedes escuchar música relajante si lo deseas.</p>
+    <label for="duracion">Elige la duración de la meditación:</label>
+    <select id="duracion">
+        <option value="1">1 minuto</option>
+        <option value="5">5 minutos</option>
+        <option value="10">10 minutos</option>
+        <option value="15">15 minutos</option>
+    </select>
+    <label for="musica">¿Deseas escuchar música de fondo?</label>
+    <input type="checkbox" id="musica">
+    <label for="cancion">Elige una canción:</label>
+    <select id="cancion" disabled>
+        <option value="">Selecciona una canción</option>
+        <option value="static/Last Sunrise - Adam MacDougall.mp3">Canción 1</option>
+        <option value="static/Mirage melody - Patrick Patrikios.mp3">Canción 2</option>
+    </select>
+    <button id="iniciar-meditacion">Iniciar Meditación</button>
+    <div id="temporizador" class="hidden">
+        <p id="cuenta-regresiva">0</p>
+    </div>
+    <div id="resultado" class="hidden"></div>
+</div> <!-- Fin del bloque de meditación -->
+
+
+    <!-- Cuestionario de Autoevaluación -->
+    <div id="cuestionario" class="juego-cuadro hidden">
+        <h2>Cuestionario de Autoevaluación</h2>
+        <form id="form-cuestionario">
+            <label for="respuesta1">¿Te sientes estresado hoy?</label><br>
+            <input type="radio" name="respuesta1" value="si"> Sí<br>
+            <input type="radio" name="respuesta1" value="no"> No<br>
+    
+            <label for="respuesta2">¿Has tenido problemas para dormir últimamente?</label><br>
+            <input type="radio" name="respuesta2" value="si"> Sí<br>
+            <input type="radio" name="respuesta2" value="no"> No<br>
+    
+            <button type="submit">Enviar</button>
+        </form>
+        <div id="resultado-cuestionario" style="display: none;"></div>
+    </div> <!-- Fin del bloque de cuestionario -->
+
+    <!-- Desafío de Estrategia -->
+    <div class="juego-cuadro hidden" id="desafio-estrategia">
+        <h2>Desafío de Estrategia</h2>
+        <p>Desarrolla habilidades de pensamiento crítico y resolución de problemas.</p>
+        
+        <label for="dificultad">Selecciona la dificultad:</label>
+        <select id="dificultad">
+            <option value="facil">Fácil</option>
+            <option value="intermedio">Intermedio</option>
+            <option value="dificil">Difícil</option>
+        </select>
+        
+        <button id="iniciar-desafio">Iniciar Juego</button>
+        
+        <div id="juego-contenido" class="hidden">
+            <div id="pregunta"></div>
+            <input type="text" id="respuesta" placeholder="Escribe tu respuesta">
+            <button id="enviar-respuesta">Enviar Respuesta</button>
+            <div id="resultado-pregunta" class="hidden"></div>
+            <div id="temporizador" class="hidden">
+                <p>Tiempo restante: <span id="tiempo"></span> segundos</p>
+            </div>
+        </div>
+        
+        <div id="resultado-final" class="hidden"></div>
+    </div>
+
+    <!-- Juego de Respiración Profunda -->
+    <div class="juego-cuadro hidden" id="juego-respiracion">
+        <h2>Juego de Respiración Profunda</h2>
+        <p>Aprende técnicas de respiración para reducir la ansiedad. Sigue las instrucciones en pantalla para inhalar, exhalar y mantener la respiración.</p>
+        
+        <button id="iniciar-respiracion">Iniciar Juego</button>
+        
+        <div id="respiracion-contenido" class="hidden">
+            <p id="instruccion-respiracion">Prepárate para comenzar...</p>
+            <div id="circulo-respiracion"></div>
+            <div id="temporizador-respiracion">
+                <p>Tiempo restante: <span id="tiempo-respiracion">300</span> segundos</p>
+            </div>
+            <div id="resultado-respiracion" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- Jardín de Gratitud -->
+    <div class="juego-cuadro hidden" id="jardin-gratitud">
+        <h2>Jardín de Gratitud</h2>
+        <p>Expresa y comparte cosas por las que estás agradecido. Añade un nuevo pensamiento de gratitud y mira cómo crece tu jardín.</p>
+        
+        <label for="input-gratitud">Escribe algo por lo que estés agradecido:</label>
+        <input type="text" id="input-gratitud" placeholder="Ej. Mi familia, mi salud">
+        <button id="agregar-gratitud">Añadir al jardín</button>
+        
+        <div id="jardin-contenido">
+            <p>Tu jardín:</p>
+            <div id="jardin"></div>
+        </div>
+        
+        <div id="resultado-gratitud" class="hidden"></div>
+    </div>
+</div> <!-- Fin del contenedor principal -->
+
+    <script>
+        // Cargar los juegos desde la API
+        fetch('/api/juegos')
+            .then(response => response.json())
+            .then(data => {
+                const juegosDiv = document.getElementById('juegos');
+                // Verificar si ya se cargaron los juegos
+                if (juegosDiv.children.length === 0) {
+                    data.juegos.forEach(juego => {
+                        const juegoDiv = document.createElement('div');
+                        juegoDiv.className = 'juego-cuadro'; // Asegura que todos tengan el mismo estilo
+                        juegoDiv.innerHTML = `<h2>${juego.nombre}</h2><p>${juego.descripcion}</p><button onclick="jugar(${juego.id})">Jugar</button>`;
+                        juegosDiv.appendChild(juegoDiv);
+                    });
+                }
+            })
+            .catch(error => console.error('Error al cargar los juegos:', error));
+
+        function jugar(id) {
+            // Ocultar todos los juegos
+            document.querySelectorAll('.juego-cuadro').forEach(cuadro => cuadro.classList.add('hidden'));
+            if (id === 1) { // Juego de Meditación
+                document.getElementById('meditacion').classList.remove('hidden');
+                document.getElementById('musica').addEventListener('change', function() {
+                    document.getElementById('cancion').disabled = !this.checked;
+                });
+            } else if (id === 2) { // Cuestionario de Autoevaluación
+                document.getElementById('cuestionario').classList.remove('hidden');
+            } else if (id === 3) { // Desafío de Estrategia
+                document.getElementById('desafio-estrategia').classList.remove('hidden');
+            } else if (id === 4) { // Juego de Respiración Profunda
+                document.getElementById('juego-respiracion').classList.remove('hidden');
+            } else if (id === 5) { // Jardín de Gratitud
+                document.getElementById('jardin-gratitud').classList.remove('hidden');
+            }
+        }
+
+        // Manejar el inicio de la meditación
+        document.getElementById('iniciar-meditacion').addEventListener('click', function() {
+            const duracionSeleccionada = parseInt(document.getElementById('duracion').value);
+            let tiempo = duracionSeleccionada * 60; // Convertir a segundos
+            const cuentaRegresiva = document.getElementById('cuenta-regresiva');
+            document.getElementById('temporizador').classList.remove('hidden');
+
+            // Reproducir música de fondo si está seleccionada
+            let audio;
+            if (document.getElementById('musica').checked) {
+                const cancionSeleccionada = document.getElementById('cancion').value;
+                if (cancionSeleccionada) {
+                    audio = new Audio(cancionSeleccionada);
+                    audio.loop = true;
+                    audio.play();
+                } else {
+                    alert("Por favor, selecciona una canción.");
+                    return;
+                }
+            }
+
+            const intervalo = setInterval(() => {
+                cuentaRegresiva.textContent = tiempo;
+                tiempo--;
+
+                if (tiempo < 0) {
+                    clearInterval(intervalo);
+                    cuentaRegresiva.textContent = "¡Meditación finalizada!";
+                    if (audio) {
+                        audio.pause(); // Detener la música
+                    }
+                    document.getElementById('resultado').textContent = "Esperamos que te sientas más relajado y centrado.";
+                    document.getElementById('resultado').classList.remove('hidden');
+                }
+            }, 1000);
+        });
+
+        // Manejar el envío del cuestionario
+        document.getElementById('form-cuestionario').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar el envío del formulario
+            const respuesta1 = document.querySelector('input[name="respuesta1"]:checked');
+            const respuesta2 = document.querySelector('input[name="respuesta2"]:checked');
+    
+            let resultadoTexto = 'Tus respuestas:\n';
+            if (respuesta1) {
+                resultadoTexto += `1. Te sientes estresado hoy: ${respuesta1.value}\n`;
+            }
+            if (respuesta2) {
+                resultadoTexto += `2. Has tenido problemas para dormir últimamente: ${respuesta2.value}\n`;
+            }
+
+            document.getElementById('resultado-cuestionario').textContent = resultadoTexto;
+            document.getElementById('resultado-cuestionario').style.display = 'block';
+            document.getElementById('cuestionario').style.display = 'none'; // Ocultar el cuestionario después de enviar
+        });
+
+        //juego de estrategia
+        document.getElementById('iniciar-desafio').addEventListener('click', function() {
+            const dificultad = document.getElementById('dificultad').value;
+            const retos = obtenerRetos(dificultad);
+            let puntaje = 0;
+            let indiceReto = 0;
+            const totalRetos = retos.length;
+        
+            document.getElementById('juego-contenido').classList.remove('hidden');
+            mostrarReto(retos[indiceReto]);
+            iniciarTemporizador(20);
+        
+            document.getElementById('enviar-respuesta').addEventListener('click', function() {
+                const respuesta = document.getElementById('respuesta').value.toLowerCase().trim();
+                if (respuesta === retos[indiceReto].respuesta.toLowerCase()) {
+                    puntaje++;
+                    document.getElementById('resultado-pregunta').textContent = "¡Correcto!";
+                } else {
+                    document.getElementById('resultado-pregunta').textContent = `Incorrecto. La respuesta era: ${retos[indiceReto].respuesta}`;
+                }
+                document.getElementById('resultado-pregunta').classList.remove('hidden');
+        
+                indiceReto++;
+                if (indiceReto < totalRetos) {
+                    mostrarReto(retos[indiceReto]);
+                } else {
+                    document.getElementById('juego-contenido').classList.add('hidden');
+                    mostrarResultadoFinal(puntaje, totalRetos);
+                }
+                document.getElementById('respuesta').value = '';
+            });
+        });
+        
+        function obtenerRetos(dificultad) {
+            const retosFacil = [
+                { pregunta: "¿Cuál es el siguiente número en la secuencia: 2, 4, 6, 8...?", respuesta: "10" },
+                { pregunta: "Si un reloj marca las 3:00, ¿cuántos grados hay entre las manecillas?", respuesta: "90" },
+            ];
+            const retosIntermedio = [
+                { pregunta: "Resuelve: 8 + (3 × 4) - 5", respuesta: "15" },
+                { pregunta: "Si un tren viaja a 60 km/h, ¿cuánto tarda en recorrer 120 km?", respuesta: "2 horas" },
+            ];
+            const retosDificil = [
+                { pregunta: "¿Cuál es el número primo más pequeño mayor que 100?", respuesta: "101" },
+                { pregunta: "¿Qué teorema establece que el cuadrado de la hipotenusa es igual a la suma de los cuadrados de los catetos?", respuesta: "Pitágoras" },
+            ];
+        
+            if (dificultad === "facil") {
+                return retosFacil;
+            } else if (dificultad === "intermedio") {
+                return retosIntermedio;
+            } else {
+                return retosDificil;
+            }
+        }
+        
+        function mostrarReto(reto) {
+            document.getElementById('pregunta').textContent = reto.pregunta;
+            document.getElementById('resultado-pregunta').classList.add('hidden');
+        }
+        
+        function iniciarTemporizador(segundos) {
+            let tiempo = segundos;
+            const temporizador = document.getElementById('temporizador');
+            const cuentaRegresiva = document.getElementById('tiempo');
+            temporizador.classList.remove('hidden');
+            cuentaRegresiva.textContent = tiempo;
+        
+            const intervalo = setInterval(() => {
+                tiempo--;
+                cuentaRegresiva.textContent = tiempo;
+                if (tiempo <= 0) {
+                    clearInterval(intervalo);
+                    temporizador.classList.add('hidden');
+                    document.getElementById('resultado-pregunta').textContent = "Se acabó el tiempo.";
+                    document.getElementById('resultado-pregunta').classList.remove('hidden');
+                }
+            }, 1000);
+        }
+        
+        function mostrarResultadoFinal(puntaje, total) {
+            const mensaje = `Has completado el desafío. Puntaje: ${puntaje} de ${total}.`;
+            document.getElementById('resultado-final').textContent = mensaje;
+            document.getElementById('resultado-final').classList.remove('hidden');
+        }
+
+        // juego respiracion 
+        document.getElementById('iniciar-respiracion').addEventListener('click', function() {
+            document.getElementById('respiracion-contenido').classList.remove('hidden');
+            iniciarTemporizadorRespiracion(300);
+            iniciarEjercicioRespiracion();
+        });
+        
+        function iniciarEjercicioRespiracion() {
+            const cicloRespiracion = [
+                { instruccion: "Inhala profundamente", duracion: 4 },
+                { instruccion: "Mantén la respiración", duracion: 4 },
+                { instruccion: "Exhala lentamente", duracion: 6 },
+            ];
+            
+            let indiceCiclo = 0;
+            ejecutarCiclo();
+        
+            function ejecutarCiclo() {
+                const { instruccion, duracion } = cicloRespiracion[indiceCiclo];
+                document.getElementById('instruccion-respiracion').textContent = instruccion;
+                animarCirculo(instruccion, duracion);
+        
+                setTimeout(() => {
+                    indiceCiclo = (indiceCiclo + 1) % cicloRespiracion.length;
+                    ejecutarCiclo();
+                }, duracion * 1000);
+            }
+        }
+        
+        function iniciarTemporizadorRespiracion(segundos) {
+            let tiempo = segundos;
+            const cuentaRegresiva = document.getElementById('tiempo-respiracion');
+        
+            const intervalo = setInterval(() => {
+                tiempo--;
+                cuentaRegresiva.textContent = tiempo;
+        
+                if (tiempo <= 0) {
+                    clearInterval(intervalo);
+                    document.getElementById('resultado-respiracion').textContent = "¡Ejercicio completado! Esperamos que te sientas más relajado.";
+                    document.getElementById('resultado-respiracion').classList.remove('hidden');
+                    document.getElementById('respiracion-contenido').classList.add('hidden');
+                }
+            }, 1000);
+        }
+        
+        function animarCirculo(instruccion, duracion) {
+            const circulo = document.getElementById('circulo-respiracion');
+            circulo.style.transition = `transform ${duracion}s ease-in-out`;
+            
+            if (instruccion === "Inhala profundamente") {
+                circulo.style.transform = "scale(1.5)";
+            } else if (instruccion === "Exhala lentamente") {
+                circulo.style.transform = "scale(0.8)";
+            } else {
+                circulo.style.transform = "scale(1)";
+            }
+        }
+        // juego jardin de gratitud 
+
+        document.getElementById('agregar-gratitud').addEventListener('click', function() {
+            const gratitud = document.getElementById('input-gratitud').value.trim();
+            if (gratitud !== "") {
+                agregarFlorAlJardin(gratitud);
+                document.getElementById('input-gratitud').value = ""; // Limpiar el campo de entrada
+            } else {
+                alert("Por favor, escribe algo por lo que estés agradecido.");
+            }
+        });
+        
+        function agregarFlorAlJardin(gratitud) {
+            const jardin = document.getElementById('jardin');
+            const flor = document.createElement('div');
+            flor.className = 'flor';
+            
+            const textoFlor = document.createElement('p');
+            textoFlor.textContent = gratitud;
+            flor.appendChild(textoFlor);
+        
+            jardin.appendChild(flor);
+            
+            animarFlor(flor);
+        }
+        
+        function animarFlor(flor) {
+            flor.style.opacity = 0;
+            flor.style.transform = "scale(0.5)";
+            
+            setTimeout(() => {
+                flor.style.transition = "all 1s ease";
+                flor.style.opacity = 1;
+                flor.style.transform = "scale(1)";
+            }, 100);
+            
+        }
+        
+        //menu
+        
+            document.addEventListener('DOMContentLoaded', function() {
+                var menuToggle = document.getElementById('menu-toggle');
+                var menuDropdown = document.getElementById('menu-dropdown');
+            
+                menuToggle.addEventListener('click', function() {
+                    menuDropdown.classList.toggle('show');
+                });
+            
+                // Cerrar el menú si se hace clic fuera de él
+                window.addEventListener('click', function(event) {
+                    if (!event.target.matches('.imagen-esquina')) {
+                        if (menuDropdown.classList.contains('show')) {
+                            menuDropdown.classList.remove('show');
+                        }
+                    }
+                });
+            });
+
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    /*background-color: #3e4e3e;*/
+    background: url("2392606046863777.jpeg") no-repeat center center fixed;
+    background-size: cover;
+    line-height: 1.6;
+}
+
+.container {
+    width: 1280px;
+    height: 735px;
+    margin: 60px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+h1 {
+    text-align: center;
+    margin: 10px;
+    font-size: 2.5em;
+    color: #000000;
+    font-family: "Jomhuria", serif;
+}
+
+.frame-6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto 100px;
+}
+
+
+.frame-13-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+
+
+.settings-v-1 .login-button a {
+    border-radius: 8px;
+    margin: 2px 0;
+    display: flex;
+    padding: 30px 30px;
+    width: 600px;
+    height: fit-content;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: white;
+    background-color: #8DCB9E;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.settings-v-1 .login-button a:hover {
+    background-color: green;
+}
+
+
+.imagen14 img {
+    width: 250px;
+    height: auto;
+    margin-left: 60px;
+}
+
+.imagen-superior {
+    width: 100%;
+    height: auto;
+    max-height: 100px; /* Ajusta la altura máxima según tus necesidades */
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .imagen-superior {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* Ajusta según el tamaño necesario */
+    object-fit: cover; /* Para que la imagen cubra toda el área */
+    z-index: -1; /* Para que el contenido esté por encima */
+  }
+  
+  
+  .imagen-esquina {
+    width: 60px; /* Tamaño pequeño */
+    height: auto;
+    position: absolute;
+    top: 14px; /* Ajusta según sea necesario */
+  }
+  
+  .izquierda {
+    left: 100px; /* Esquina superior izquierda */
+  }
+  
+  .derecha {
+    right: 100px; /* Esquina superior derecha */
+  }
+  
+  .menu-container {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    z-index: 1000;
+    width: 60px;
+  }
+  
+  .menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 60px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .menu-dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .menu-dropdown a:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .show {
+    display: block;
+  }

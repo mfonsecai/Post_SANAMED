@@ -1,0 +1,101 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='saludmental1.ico ') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        <img src="static/Rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
+
+        <h1 title="Bienvenido a SANAMED">Bienvenido a SANAMED</h1>
+        <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
+    
+        <div class="menu-container">
+            <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
+        </div>
+        <div class="container">
+            <h2 title="Inicio de Sesión">INICIO DE SESIÓN</h2>
+
+            <img src="{{ url_for('static', filename='salud-mental1.jpg') }}" alt="Descripción de la imagen" title="Imagen ilustrativa sobre salud mental">
+
+            {% if error %}
+            <div class="alert" title="Credenciales incorrectas">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form action="/login" method="POST">
+                {% if mensaje %}
+                <div class="alert">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ mensaje }}
+                </div>
+                {% endif %}
+    
+                <div class="form-group">
+                    <label for="rol" title="Rol"></label>
+                    <select id="rol" name="rol" title="Rol con el que desea ingresar" required>
+                        <option value="" disabled selected hidden>Rol</option>
+                        <option value="usuario">Usuario</option>
+                        <option value="profesional">Profesional</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <input type="text" class="username" name="correo" placeholder="Correo Electrónico" required title="Ingrese su dirección de correo electrónico">
+                <input type="password" class="password" name="contrasena" placeholder="Contraseña" required title="Ingrese su contraseña">
+                <div class="forgot-password">
+                    <a href="SOFTWARE II/templates/register.html" title="¿Olvidaste tu contraseña?">¿Olvidaste tu contraseña?</a>
+                </div>
+                <button type="submit" title="Iniciar Sesión">Inicio Sesión</button>
+            </form>
+
+            <div class="register-link" title="Registro">
+                <span>¿No tienes una cuenta?</span> <a href="{{ url_for('register') }}">Regístrate aquí</a>
+            </div>
+        </div>
+        <script>
+
+        //menu
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            var menuToggle = document.getElementById('menu-toggle');
+            var menuDropdown = document.getElementById('menu-dropdown');
+        
+            menuToggle.addEventListener('click', function() {
+                menuDropdown.classList.toggle('show');
+            });
+        
+            // Cerrar el menú si se hace clic fuera de él
+            window.addEventListener('click', function(event) {
+                if (!event.target.matches('.imagen-esquina')) {
+                    if (menuDropdown.classList.contains('show')) {
+                        menuDropdown.classList.remove('show');
+                    }
+                }
+            });
+        });
+    </script>
+
+    </body>
+    </html>
+
+    <style>
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            height: 732px;
+            background-color: rgb(255, 255, 255);
+            padding: 20px;
+            margin: 40px auto; /* Añade margen superior para bajarlo */
+            border-radius: 8px;
+            text-align: center;
+            left: 40px; /* Este estilo es redundante aquí, ya que el contenedor está centrado */
+        }
+        
+        
+    </style>
+    

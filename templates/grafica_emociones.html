@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='saludmental1.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style4.css') }}">
+    <title>Gráfica de Emociones</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Librería Chart.js -->
+</head>
+<body>
+    <h1 class="titulo-centrado">SANAMED</h1>
+    
+    <img src="{{ url_for('static', filename='rectangle 6.png') }}" alt="Imagen Superior" class="imagen-superior">
+    <img src="{{ url_for('static', filename='saludmental1.png') }}" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
+
+    <div class="menu-container">
+        <img src="{{ url_for('static', filename='saludmental1.png') }}" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
+        <div class="menu-dropdown" id="menu-dropdown">
+            <a href="{{ url_for('user_home') }}">Home</a>
+            <a href="{{ url_for('configuracion') }}">Configuración</a>
+            <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="titulo-centrado">Emociones del día {{ fecha_seleccionada }}</h1>
+        
+        <div class="appointment-form" title="Grafica de emociones">
+        <!-- Canvas para la gráfica -->
+        <canvas id="emotionChart"></canvas>
+    </div>
+    <button onclick="goBack()" class="btn-volver">Volver al Calendario</button>
+
+    <script>
+        function goBack() {
+            // Si el navegador tiene historial, regresa a la página anterior
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                // Si no hay historial previo, redirige al calendario directamente
+                window.location.href = "{{ url_for('mostrar_calendario') }}";
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('emotionChart').getContext('2d');
+
+            // Emociones y cantidades desde el backend
+            const emociones = {{ emociones | tojson }};
+            const cantidades = {{ cantidades | tojson }};
+            
+            // Crear el gráfico de barras
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: emociones, // etiquetas (emociones) en el eje X
+                    datasets: [{
+                        label: 'Conteo de emociones',
+                        data: cantidades, // cantidad de cada emoción en el eje Y
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Conteo',
+                                font: {
+                                    weight: 'bold' // Poner en negrilla el texto del eje Y
+                                }
+                            },
+                            beginAtZero: true
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Emociones',
+                                font: {
+                                    weight: 'bold' // Poner en negrilla el texto del eje Y
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    <script>
+        // Menú desplegable
+        document.addEventListener('DOMContentLoaded', function() {
+            var menuToggle = document.getElementById('menu-toggle');
+            var menuDropdown = document.getElementById('menu-dropdown');
+        
+            menuToggle.addEventListener('click', function() {
+                menuDropdown.classList.toggle('show');
+            });
+        
+            window.addEventListener('click', function(event) {
+                if (!event.target.matches('.imagen-esquina')) {
+                    if (menuDropdown.classList.contains('show')) {
+                        menuDropdown.classList.remove('show');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

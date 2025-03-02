@@ -1,0 +1,105 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - SANAMED</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='saludmental1.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+</head>
+<body>
+    <h1 class="titulo-centrado">SANAMED</h1>
+    <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
+    <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
+  
+    <div class="menu-container">
+        <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
+        <div class="menu-dropdown" id="menu-dropdown">
+            <a href="{{ url_for('index') }}">Inicio</a>
+  
+        </div>
+    </div>
+    <div class="container">
+        <div class="left-side">
+            <h2>Registrarse</h2>
+            <img src="static/saludmental1.png" alt="Icono de salud mental" class="brain-icon">
+        </div>
+        
+        <div class="right-side">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if error %}
+        <div class="alert" title="La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ error }}
+        </div>
+        {% endif %}
+
+            <form action="/signup" method="POST">
+                <div class="form-group">
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre Completo" required>
+                </div>
+                <div class="form-group">
+                    <select id="tipo_documento" name="tipo_documento" required title="Seleccione su tipo de documento">
+                        <option value="" disabled selected>Tipo de documento</option>
+                        <option value="Cedula">Cedula</option>
+                        <option value="Pasaporte">Pasaporte</option>
+                        <option value="Tarjeta Identidad">Tarjeta Identidad</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="numero_documento" name="numero_documento" placeholder="# de Documento" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="celular" name="celular" placeholder="Celular" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="correo" name="correo" placeholder="Correo Electronico" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn">Registrarse</button>
+            </form>
+
+            <div class="register-link">
+                Ya tienes una cuenta? <a href="{{ url_for('index') }}">Iniciar sesión</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        //menu
+            
+                document.addEventListener('DOMContentLoaded', function() {
+                    var menuToggle = document.getElementById('menu-toggle');
+                    var menuDropdown = document.getElementById('menu-dropdown');
+                
+                    menuToggle.addEventListener('click', function() {
+                        menuDropdown.classList.toggle('show');
+                    });
+                
+                    // Cerrar el menú si se hace clic fuera de él
+                    window.addEventListener('click', function(event) {
+                        if (!event.target.matches('.imagen-esquina')) {
+                            if (menuDropdown.classList.contains('show')) {
+                                menuDropdown.classList.remove('show');
+                            }
+                        }
+                    });
+                });
+    
+            
+        </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style7.css') }}">
+    <title>Sanamed - Software de Salud Mental</title>
+</head>
+<body>
+    <h1 class="titulo-centrado">SANAMED</h1>
+    <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
+    <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
+
+    <div class="menu-container">
+        <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
+        <div class="menu-dropdown" id="menu-dropdown">
+            <a href="{{ url_for('user_home') }}">Home</a>
+            <a href="{{ url_for('configuracion') }}">Configuración</a>
+            <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+
+        </div>
+    </div>
+
+    <div class="container"> 
+        <h1 class="title" title="Formulario para agendar su cita">Agende su Cita</h1>
+        
+        <form action="/agendar_cita" method="POST" class="appointment-form">
+            {% if error %}
+        <div class="alert">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ error }}
+        </div>
+        {% endif %}
+        {% if success %}
+        <div class="alert success-alert">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ success }}
+        </div>
+        {% endif %}
+
+            <div class="form-group">
+                <label for="fecha" class="form-label" title="Fecha de su cita">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required class="form-input" title="Seleccione la fecha de su cita">
+            </div>
+        
+            <div class="form-group">
+                <label for="hora" class="form-label" title="Hora de su cita">Hora:</label>
+                <select id="hora" name="hora" required class="form-select" title="Seleccione la hora de su cita">
+                    <option value="" disabled selected>Selecciona una hora</option>
+                    <option value="08:00 AM">08:00 AM</option>
+                    <option value="09:00 AM">09:00 AM</option>
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="01:00 PM">01:00 PM</option>
+                    <option value="02:00 PM">02:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="04:00 PM">04:00 PM</option>
+                    <option value="05:00 PM">05:00 PM</option>
+                </select>
+            </div>
+        
+           
+            <div class="form-group">
+                <label for="motivo" id="motivo-label" title="Motivo de su cita">Motivo:</label>
+                <textarea id="motivo" name="motivo" rows="7" cols="40" required class="form-textarea" placeholder="Describa el motivo de la cita" title="Motivo de la cita"></textarea>
+            </div>
+                    
+            <div class="form-group-full">
+                <label for="profesional" class="form-label" title="Seleccione el profesional con el que desea agendar la cita">Profesional:</label>
+                <select id="profesional" name="profesional" class="form-select-full" title="Profesional de la cita">
+                    {% for profesional in profesionales %}
+                        <option value="{{ profesional[0] }}">{{ profesional[1] }} - {{ profesional[2] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+           
+        
+        </form>
+        <div class="button-container">
+            <button type="submit" id="agendar-cita" class="form-submit" title="Agendar cita">Agendar Cita</button>
+        </div>
+        
+        
+    </div>
+
+    <script>
+    //menu
+        
+    document.addEventListener('DOMContentLoaded', function() {
+        var menuToggle = document.getElementById('menu-toggle');
+        var menuDropdown = document.getElementById('menu-dropdown');
+    
+        menuToggle.addEventListener('click', function() {
+            menuDropdown.classList.toggle('show');
+        });
+    
+        // Cerrar el menú si se hace clic fuera de él
+        window.addEventListener('click', function(event) {
+            if (!event.target.matches('.imagen-esquina')) {
+                if (menuDropdown.classList.contains('show')) {
+                    menuDropdown.classList.remove('show');
+                }
+            }
+        });
+    });
+
+
+</script>
+
+</body>
+</html>

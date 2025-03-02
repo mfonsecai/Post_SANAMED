@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style23.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='saludmental1.ico ') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Sanamed - configuracion</title>
+</head>
+<body>
+        <h1 class="titulo-centrado">SANAMED</h1>
+        <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
+        <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
+        
+        <div class="menu-container">
+            <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
+            <div class="menu-dropdown" id="menu-dropdown">
+                <a href="{{ url_for('user_home') }}">Home</a>
+                <a href="{{ url_for('configuracion') }}">Configuración</a>
+                <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+    
+            </div>
+        </div>
+        <div class="container">
+            <h1 title="Preguntas frecuentes">Preguntas frecuentes</h1>
+
+
+    <!-- Preguntas Frecuentes -->
+    <div class="faq">
+        <div class="scroll-box">
+            <div class="faq-question"  title=" ¿Como solicitar una cita en SANAMED? " onclick="toggleAnswer('faq4')">¿Como  puedo solicitar una cita en SANAMED?</div>
+            <div class="faq-answer" id="faq4">Para poder esolicitar una cita con SANAMED, ingresa a la aplicación SANAMED con tu correo electrónico y contraseña previamente registrados. Al iniciar sesión, verás un botón con el nombre "Agendar Cita"Haz clic en "Agendar Cita", completa los campos (fecha, hora, motivo y profesional) y confirma. Recibirás un mensaje de confirmación y podrás ver tu cita en el calendario. </div>
+            <div class="faq-question" title="¿Como puedo chatear con el BOT? " onclick="toggleAnswer('faq2')">¿Como puedo chatear con el BOT?</div>
+            <div class="faq-answer" id="faq2"> Para poder hablar con nuestro bot, ingresa a la aplicación SANAMED con tu correo electrónico y contraseña previamente registrados. Al iniciar sesión, encontrarás un apartado que te indica "Chatear con el bot". Al hacer clic sobre el botón, serás redirigido a nuestro bot para que puedas usarlo de la mejor manera. </div>
+            <div class="faq-question"  title="¿Como escuchar nuestra PLAYLIST de musica relajante ?" onclick="toggleAnswer('faq3')">¿Como escuchar nuestra PLAYLIST de musica relajante ?</div>
+            <div class="faq-answer" id="faq3">Para poder escuchar nuestra PLAYLIST, ingresa a la aplicación SANAMED con tu correo electrónico y contraseña previamente registrados. Al iniciar sesión, veras un boton con el nombre "Musica Relante " este boton te llevara a nuestra PLAYLIST de musica relajante  </div>
+            <div class="faq-question" title=" ¿Como registrar mis EMOCIONES?" onclick="toggleAnswer('faq1')">¿Como registrar mis EMOCIONES? </div>
+            <div class="faq-answer" id="faq1"> Para registrar tus emociones, ingresa a la aplicación SANAMED con tu correo electrónico y contraseña previamente registrados. Al iniciar sesión, encontrarás un apartado con diferentes emociones identificadas por colores. Al hacer clic en una de ellas, se guardará automáticamente en el calendario. </div>
+            <div class="faq-question" title="¿Qué fin tiene el boton "Herramientas y Actividades"?" onclick="toggleAnswer('faq5')">¿Qué fin tiene el boton "HERRAMIENTAS Y ACTIVIDADES"?</div>
+            <div class="faq-answer" id="faq5">La función de nuestro botón "Herramientas y Actividades" es proporcionarte una sección de juegos para que puedas relajarte y ser más feliz con SANAMED. </div>
+            <div class="faq-question" title = "¿Que funcion tiene nuestro CALENDARIO?"  onclick="toggleAnswer('faq6')">¿Que funcion tiene nuestro CALENDARIO?</div>
+            <div class="faq-answer" id="faq6">Nuestro calendario tiene la función de registrar las citas programadas. En él, puedes ver el día y la hora de tus citas. Además, puedes registrar las emociones seleccionadas y la hora y día en que lo hiciste, para siempre saber cómo te sientes. </div>
+        </div>    
+    </div>
+        <script src="{{ url_for('static', filename='js/sanamed.js') }}"></script>
+        <script src="static/sanamed.js"></script>
+
+    </div>
+    <script>
+        //menu
+            
+                document.addEventListener('DOMContentLoaded', function() {
+                    var menuToggle = document.getElementById('menu-toggle');
+                    var menuDropdown = document.getElementById('menu-dropdown');
+                
+                    menuToggle.addEventListener('click', function() {
+                        menuDropdown.classList.toggle('show');
+                    });
+                
+                    // Cerrar el menú si se hace clic fuera de él
+                    window.addEventListener('click', function(event) {
+                        if (!event.target.matches('.imagen-esquina')) {
+                            if (menuDropdown.classList.contains('show')) {
+                                menuDropdown.classList.remove('show');
+                            }
+                        }
+                    });
+                });
+    
+            
+        </script>
+</body>
+</html>

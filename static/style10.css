@@ -1,0 +1,152 @@
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: url("2392606046863777.jpeg") no-repeat center center fixed;
+    background-size: cover;
+    line-height: 1.6;
+}
+.container {
+    width: 1280px;
+    height: 760px;
+    margin: 60px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+h1 {
+    text-align: center;
+    margin: 10px;
+    font-size: 2.5em;
+    color: #000000;
+    font-family: "Jomhuria", serif;
+}
+
+
+.appointment-form table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    margin: 20px auto;
+    font-size: 17px;
+}
+
+.appointment-form th,
+.appointment-form td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.container a {
+    color: green;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold; /* Texto en negrilla */
+    margin-top: -50px; /* Ajusta el margen superior del enlace */
+    margin-bottom: 10px;
+    display: inline-block; /* Permite aplicar el margen superior */
+}
+
+form {
+    display: inline;
+}
+
+button {
+    width: 80px;
+    height: 40px;
+    background-color: #8DCB9E;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: darkgreen;
+}
+
+
+.appointment-form {
+    max-width: 1000px;
+    margin: auto;
+    height: 500px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin-top: 2px;
+    overflow-y: auto;  /* Habilita el scroll vertical si hay muchas entradas */
+}
+
+.imagen-superior {
+    width: 100%;
+    height: auto;
+    max-height: 100px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.imagen-esquina {
+    width: 60px;
+    height: auto;
+    position: absolute;
+    top: 14px;
+}
+
+.izquierda {
+    left: 100px;
+}
+
+.derecha {
+    right: 100px;
+}
+
+.menu-container {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    z-index: 1000;
+    width: 60px;
+}
+
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 60px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.menu-dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.menu-dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
+
+
+

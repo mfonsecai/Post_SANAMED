@@ -1,0 +1,17 @@
+#puzzle {
+    width: 400px;
+    height: 400px;
+    border: 2px solid #000;
+    position: relative;
+}
+
+.piece {
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
+    border: 1px solid #000;
+    position: absolute;
+    cursor: pointer;
+}
+
+/* Agrega estilos adicionales según sea necesario */
