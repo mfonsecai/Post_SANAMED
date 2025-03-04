@@ -83,6 +83,8 @@ def login():
             session['id_administrador'] = user_data.id_administrador if rol == 'admin' else None
             session['last_activity'] = datetime.now().isoformat()  # Agregar timestamp
 
+            print("ID del profesional logueado:", session.get('id_profesional'))  # Verifica el ID
+
             if rol == 'usuario':
                 return redirect(url_for('user_home'))
             elif rol == 'profesional':
@@ -91,7 +93,7 @@ def login():
                 return redirect(url_for('admin_home'))
         else:
             return render_template('index.html', error="Credenciales incorrectas")
-
+        
 @app.route('/signup', methods=["GET", 'POST'])
 def register():
     if request.method == 'POST':
@@ -676,7 +678,16 @@ def citas_asignadas():
 @login_required
 def diagnosticos_tratamientos():
     if 'logged_in' in session and session['logged_in']:
+        # Verifica el contenido de la sesión
+        print("Contenido de la sesión:", session)  # Depuración
+
+        # Obtener el ID del profesional logueado
         id_profesional = obtener_id_usuario_actual()
+        print("ID del profesional logueado:", id_profesional)  # Depuración
+
+        if id_profesional is None:
+            flash("No se pudo obtener el ID del profesional.", "error")
+            return redirect(url_for('index'))
 
         # Obtener las consultas asignadas al profesional
         consultas = db.session.query(
@@ -692,40 +703,47 @@ def diagnosticos_tratamientos():
          .filter(Consulta.fecha_consulta < datetime.now(), ProfesionalUsuario.id_profesional == id_profesional) \
          .all()
 
-        # Convertir las consultas a objetos de la clase Consulta
-        consultas_obj = [Consulta(*consulta) for consulta in consultas]
+        print("Consultas encontradas:", consultas)  # Depuración
 
-        if request.method == 'POST':
-            flash('Actualizado correctamente', 'success')
+        # Si no hay consultas, mostrar un mensaje
+        if not consultas:
+            flash("No hay consultas asignadas.", "info")
 
-        return render_template('diagnosticos_tratamientos.html', consultas=consultas_obj)
+        # Renderizar la plantilla con las consultas
+        return render_template('diagnosticos_tratamientos.html', consultas=consultas)
     else:
+        # Si no está logueado, redirigir al index
         return redirect(url_for('index'))
-    
-    
+        
 @app.route('/editar_diagnostico_tratamiento/<int:id_consulta>', methods=['POST'])
 @login_required
 def editar_diagnostico_tratamiento(id_consulta):
-    try:
-        # Obtener el diagnóstico y tratamiento del formulario
-        diagnostico = request.form['diagnostico']
-        tratamiento = request.form['tratamiento']
+    if 'logged_in' in session and session['logged_in']:
+        try:
+            # Obtener el diagnóstico y tratamiento del formulario
+            diagnostico = request.form['diagnostico']
+            tratamiento = request.form['tratamiento']
 
-        # Buscar la consulta por su ID
-        consulta = Consulta.query.get(id_consulta)
-        if consulta:
-            # Actualizar el diagnóstico y tratamiento
-            consulta.diagnostico = diagnostico
-            consulta.tratamiento = tratamiento
-            db.session.commit()
-            flash('El diagnóstico y tratamiento se han actualizado correctamente.', 'success')
-        else:
-            flash('Consulta no encontrada.', 'error')
-    except Exception as e:
-        # En caso de error, deshacer la transacción
-        db.session.rollback()
-        flash(f"Error al actualizar el diagnóstico y tratamiento: {str(e)}", 'error')
-    return redirect(url_for('diagnosticos_tratamientos'))
+            # Buscar la consulta por su ID
+            consulta = Consulta.query.get(id_consulta)
+            if consulta:
+                # Actualizar el diagnóstico y tratamiento
+                consulta.diagnostico = diagnostico
+                consulta.tratamiento = tratamiento
+                db.session.commit()
+                flash('El diagnóstico y tratamiento se han actualizado correctamente.', 'success')
+            else:
+                flash('Consulta no encontrada.', 'error')
+        except Exception as e:
+            # En caso de error, deshacer la transacción
+            db.session.rollback()
+            flash(f"Error al actualizar el diagnóstico y tratamiento: {str(e)}", 'error')
+        
+        # Redirigir a la página de diagnósticos y tratamientos
+        return redirect(url_for('diagnosticos_tratamientos'))
+    else:
+        # Si no está logueado, redirigir al index
+        return redirect(url_for('index'))
 
 
 @app.route('/configuracion')
