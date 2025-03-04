@@ -26,26 +26,27 @@
         <h1>Mis Pacientes</h1>
         <div class="appointment-form">
 
+            {% if pacientes %}
+            <p>Número de pacientes: {{ pacientes|length }}</p>
             <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Número de Documento</th>
-                        <th>Celular</th>
-                        <th>Correo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for paciente in pacientes %}
-                    <tr>
-                        <td>{{ paciente[0] }}</td>
-                        <td>{{ paciente[1] }}</td>
-                        <td>{{ paciente[2] }}</td>
-                        <td>{{ paciente[3] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Número de Documento</th>
+                    <th>Celular</th>
+                    <th>Correo</th>
+                </tr>
+                {% for paciente in pacientes %}
+                <tr>
+                    <td>{{ paciente.nombre }}</td>
+                    <td>{{ paciente.numero_documento }}</td>
+                    <td>{{ paciente.celular }}</td>
+                    <td>{{ paciente.correo }}</td>
+                </tr>
+                {% endfor %}
             </table>
+        {% else %}
+            <p>No hay pacientes para mostrar.</p>
+        {% endif %}
         </div>
         <script>
             //menu

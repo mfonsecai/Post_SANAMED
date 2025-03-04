@@ -30,11 +30,17 @@ def validate_password(password):
 
 # Función para obtener el ID del usuario actualmente logueado
 def obtener_id_usuario_actual():
-    if 'id_usuario' in session:
+    # Verifica si el usuario es un profesional
+    if 'id_profesional' in session:
+        return session['id_profesional']
+    # Verifica si el usuario es un administrador
+    elif 'id_administrador' in session:
+        return session['id_administrador']
+    # Verifica si el usuario es un usuario normal
+    elif 'id_usuario' in session:
         return session['id_usuario']
     else:
-        return None
-
+        return None  # Si no hay ningún ID en la sesión
 
 def generar_id_profesional_aleatorio():
     # Obtener todos los profesionales desde la base de datos
@@ -617,6 +623,7 @@ def eliminar_consulta(id):
 def pacientes():
     if 'logged_in' in session and session['logged_in']:
         id_profesional = obtener_id_usuario_actual()
+        print("ID del profesional logueado:", id_profesional)  # Verifica el ID
 
         pacientes = db.session.query(
             Usuario.nombre,
@@ -626,6 +633,8 @@ def pacientes():
         ).join(ProfesionalUsuario, Usuario.id_usuario == ProfesionalUsuario.id_usuario) \
          .filter(ProfesionalUsuario.id_profesional == id_profesional) \
          .all()
+
+        print("Pacientes asociados al profesional:", pacientes)  # Verifica los datos
 
         return render_template('lista_pacientes.html', pacientes=pacientes)
     else:
