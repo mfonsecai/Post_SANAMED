@@ -1,4 +1,4 @@
-import re, random, psycopg2
+import re, random, psycopg2,secrets
 from datetime import datetime,date, timedelta
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify,flash
 from flask_sqlalchemy import SQLAlchemy
@@ -6,16 +6,26 @@ from functools import wraps
 from collections import Counter
 from models import Perfil, Usuario, Profesional, Administrador, Consulta, Emocion, ProfesionalUsuario
 from extensions import db
+from flask_mail import Mail, Message
+from flask_bcrypt import Bcrypt, check_password_hash, generate_password_hash
 
 # Configurar la aplicación Flask
 app = Flask(__name__, template_folder="templates")
-app.secret_key = "sanamed"
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://usuario:sanamed@localhost/postsanamed'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db.init_app(app)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'sanamed467@gmail.com'
+app.config['MAIL_PASSWORD'] = 'bkca lkuj cahk rnlm'
 
+app.secret_key = "sanamed"
+
+
+mail = Mail(app)
+db.init_app(app)
+bcrypt = Bcrypt(app)
 
 # Función para validar la contraseña
 def validate_password(password):
@@ -58,6 +68,83 @@ def generar_id_profesional_aleatorio():
 def index():
     return render_template('index.html')
 
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        
+        # Buscar el correo en las tres tablas
+        user = Usuario.query.filter_by(correo=email).first()
+        if not user:
+            user = Profesional.query.filter_by(correo=email).first()
+        if not user:
+            user = Administrador.query.filter_by(correo=email).first()
+        
+        if user:
+            token = secrets.token_urlsafe(32)  # Generar un token seguro
+            user.reset_token = token  # Almacenar el token en el usuario correspondiente
+            db.session.commit()
+            
+            # Enviar el token por correo electrónico
+            msg = Message('Restablecer Contraseña', sender='tu_correo@gmail.com', recipients=[email])
+            msg.body = f'Para restablecer tu contraseña, usa el siguiente token: {token}'
+            mail.send(msg)
+            
+            flash("Se ha enviado un token a tu correo electrónico.", "success")
+            # Redirigir al usuario a la página de restablecimiento de contraseña
+            return redirect(url_for('reset_password'))
+        else:
+            flash("Correo electrónico no encontrado.", "error")
+            return redirect(url_for('forgot_password'))
+    
+    # Si es GET, renderizar la vista HTML
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        token = request.form.get('token')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # Validar que las contraseñas coincidan
+        if new_password != confirm_password:
+            flash("Las contraseñas no coinciden.", "error")
+            return redirect(url_for('reset_password'))
+        
+        # Validar que la contraseña cumpla con los requisitos
+        if not validate_password(new_password):
+            flash("La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial.", "error")
+            return redirect(url_for('reset_password'))
+        
+        # Buscar el token en las tres tablas
+        user = Usuario.query.filter_by(reset_token=token).first()
+        if not user:
+            user = Profesional.query.filter_by(reset_token=token).first()
+        if not user:
+            user = Administrador.query.filter_by(reset_token=token).first()
+        
+        if user:
+            # Verificar que el token esté asociado al correo correcto
+            if user.reset_token == token:
+                hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+                user.contrasena = hashed_password  # Actualizar la contraseña
+                user.reset_token = None  # Eliminar el token después de usarlo
+                db.session.commit()
+                
+                flash("Contraseña restablecida con éxito.", "success")
+                return redirect(url_for('login'))  # Redirigir al login después de restablecer la contraseña
+            else:
+                flash("Token inválido o expirado.", "error")
+                return redirect(url_for('reset_password'))
+        else:
+            flash("Token inválido o expirado.", "error")
+            return redirect(url_for('reset_password'))
+    
+    # Si es GET, renderizar la vista HTML
+    return render_template('reset_password.html')
+
+from flask_bcrypt import check_password_hash
 
 @app.route('/login', methods=["GET", 'POST'])
 def login():
@@ -67,16 +154,18 @@ def login():
         rol = request.form['rol']
 
         # Buscar en la tabla de usuarios
-        user_data = Usuario.query.filter_by(correo=username, contrasena=password, tipo_perfil=rol).first()
-       
+        user_data = Usuario.query.filter_by(correo=username, tipo_perfil=rol).first()
+        
         # Si no se encuentra en la tabla de usuarios, buscar en la tabla de profesionales
         if not user_data and rol == "profesional":
-            user_data = Profesional.query.filter_by(correo=username, contrasena=password).first()
+            user_data = Profesional.query.filter_by(correo=username).first()
+        
         # Si aún no se encuentra, buscar en la tabla de administradores
         if not user_data and rol == "admin":
-            user_data = Administrador.query.filter_by(correo=username, contrasena=password).first()
+            user_data = Administrador.query.filter_by(correo=username).first()
 
-        if user_data:
+        # Verificar si se encontró un usuario y si la contraseña es correcta
+        if user_data and check_password_hash(user_data.contrasena, password):
             session['logged_in'] = True
             session['id_usuario'] = user_data.id_usuario if rol == 'usuario' else None
             session['id_profesional'] = user_data.id_profesional if rol == 'profesional' else None
@@ -94,6 +183,8 @@ def login():
         else:
             return render_template('index.html', error="Credenciales incorrectas")
         
+from flask_bcrypt import generate_password_hash
+
 @app.route('/signup', methods=["GET", 'POST'])
 def register():
     if request.method == 'POST':
@@ -122,14 +213,17 @@ def register():
             flash("El número de documento ya se encuentra registrado", "error")
             return render_template('register.html', error="El número de documento ya se encuentra registrado")
 
-        # Crear un nuevo usuario
+        # Encriptar la contraseña antes de almacenarla
+        hashed_password = generate_password_hash(contrasena).decode('utf-8')
+
+        # Crear un nuevo usuario con la contraseña encriptada
         nuevo_usuario = Usuario(
             nombre=nombre,
             tipo_documento=tipo_documento,
             numero_documento=numero_documento,
             celular=celular,
             correo=correo,
-            contrasena=contrasena
+            contrasena=hashed_password  # Usar la contraseña encriptada
         )
 
         # Insertar el nuevo usuario en la base de datos

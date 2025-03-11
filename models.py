@@ -18,6 +18,7 @@ class Usuario(db.Model):
     correo = db.Column(db.String(50), unique=True, nullable=False)
     contrasena = db.Column(db.String(100), nullable=False)
     tipo_perfil = db.Column(db.String(20), nullable=False, default='usuario')
+    reset_token = db.Column(db.String(100), nullable=True)  # Token para restablecer contraseña
 
 class Profesional(db.Model):
     __tablename__ = 'profesionales'
@@ -26,6 +27,7 @@ class Profesional(db.Model):
     especialidad = db.Column(db.String(50), nullable=False)
     correo = db.Column(db.String(50), unique=True, nullable=False)
     contrasena = db.Column(db.String(100), nullable=False)
+    reset_token = db.Column(db.String(100), nullable=True)  # Token para restablecer contraseña
 
 class Administrador(db.Model):
     __tablename__ = 'administradores'
@@ -33,7 +35,8 @@ class Administrador(db.Model):
     nombre = db.Column(db.String(50), nullable=False)
     correo = db.Column(db.String(50), unique=True, nullable=False)
     contrasena = db.Column(db.String(100), nullable=False)
-
+    reset_token = db.Column(db.String(100), nullable=True)  # Token para restablecer contraseña
+    
 class Consulta(db.Model):
     __tablename__ = 'consultas'
     id_consulta = db.Column(db.Integer, primary_key=True)
