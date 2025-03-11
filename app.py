@@ -6,6 +6,8 @@ from functools import wraps
 from collections import Counter
 from models import Perfil, Usuario, Profesional, Administrador, Consulta, Emocion, ProfesionalUsuario
 from extensions import db
+from flask_mail import Mail, Message
+import secrets
 
 # Configurar la aplicación Flask
 app = Flask(__name__, template_folder="templates")
@@ -13,6 +15,14 @@ app.secret_key = "sanamed"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://usuario:sanamed@localhost/postsanamed'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'supersecretkey'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'Sanamed467@gmail.com'  # Cambiar
+app.config['MAIL_PASSWORD'] = 'Sanamed2025'  # Cambiar, usar variables de entorno para seguridad
+
+mail = Mail(app)
 
 db.init_app(app)
 
@@ -93,6 +103,44 @@ def login():
                 return redirect(url_for('admin_home'))
         else:
             return render_template('index.html', error="Credenciales incorrectas")
+        
+        
+# Simulación de base de datos
+users = {"usuario@example.com": {"reset_token": None}}
+
+def generate_reset_token():
+    return secrets.token_urlsafe(16)
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        
+        email = request.form.get('email')
+        if email in users:
+            token = generate_reset_token()
+            users[email]['reset_token'] = token
+            reset_link = url_for('reset_password', token=token, _external=True)
+            
+            msg = Message("Restablecer contraseña", sender=app.config['MAIL_USERNAME'], recipients=[email])
+            msg.body = f'Para restablecer tu contraseña, haz clic en el siguiente enlace: {reset_link}'
+            mail.send(msg)
+            flash('Correo de restablecimiento enviado', 'info')
+        else:
+            flash('Correo no registrado', 'danger')
+        return redirect(url_for('forgot_password'))
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    for email, data in users.items():
+        if data['reset_token'] == token:
+            if request.method == 'POST':
+                new_password = request.form.get('password')
+                flash('Contraseña actualizada', 'success')
+                return redirect(url_for('login'))
+            return render_template('reset_password.html', token=token)
+    flash('Token inválido o expirado', 'danger')
+    return redirect(url_for('forgot_password'))
         
 @app.route('/signup', methods=["GET", 'POST'])
 def register():

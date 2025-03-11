@@ -48,7 +48,7 @@
                 <input type="text" class="username" name="correo" placeholder="Correo Electrónico" required title="Ingrese su dirección de correo electrónico">
                 <input type="password" class="password" name="contrasena" placeholder="Contraseña" required title="Ingrese su contraseña">
                 <div class="forgot-password">
-                    <a href="SOFTWARE II/templates/register.html" title="¿Olvidaste tu contraseña?">¿Olvidaste tu contraseña?</a>
+                    <a href="{{ url_for('forgot_password') }}"  title="¿Olvidaste tu contraseña?">¿Olvidaste tu contraseña?</a>
                 </div>
                 <button type="submit" title="Iniciar Sesión">Inicio Sesión</button>
             </form>
