@@ -23,6 +23,8 @@ app.config['MAIL_PASSWORD'] = 'bkca lkuj cahk rnlm'
 app.secret_key = "sanamed"
 
 
+
+
 mail = Mail(app)
 db.init_app(app)
 bcrypt = Bcrypt(app)
