@@ -135,6 +135,7 @@ def reset_password():
                 flash("Contraseña restablecida con éxito.", "success")
                 return redirect(url_for('index')) # Redirigir al login después de restablecer la contraseña
             else:
+                
                 flash("Token inválido o expirado.", "error")
                 return redirect(url_for('reset_password'))
         else:
