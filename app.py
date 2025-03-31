@@ -1,13 +1,16 @@
-import re, random, psycopg2,secrets
-from datetime import datetime,date, timedelta, time
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify,flash
+import re, random, psycopg2, secrets
+from datetime import datetime, date, timedelta, time
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from collections import Counter
-from models import Perfil, Usuario, Profesional, Administrador, Consulta, Emocion, ProfesionalUsuario
-from extensions import db
 from flask_mail import Mail, Message
 from flask_bcrypt import Bcrypt, check_password_hash, generate_password_hash
+from flask_migrate import Migrate  # Importar Migrate
+
+# Importa modelos y extensiones
+from models import Perfil, Usuario, Profesional, Administrador, Consulta, Emocion, ProfesionalUsuario
+from extensions import db  # Asegúrate de que extensions.py contiene "db = SQLAlchemy()"
 
 # Configurar la aplicación Flask
 app = Flask(__name__, template_folder="templates")
@@ -22,11 +25,10 @@ app.config['MAIL_PASSWORD'] = 'bkca lkuj cahk rnlm'
 
 app.secret_key = "sanamed"
 
-
-
-
+# Inicializar extensiones correctamente
+db.init_app(app)  # Aquí solo llamamos "init_app"
+migrate = Migrate(app, db)
 mail = Mail(app)
-db.init_app(app)
 bcrypt = Bcrypt(app)
 
 # Función para validar la contraseña
