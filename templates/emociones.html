@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{{ url_for('static', filename='saludmental1.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style9.css') }}">
-    <title>Emociones del día</title>
+    <title>Emociones del día {{ fecha_seleccionada }}</title>
 </head>
 <body>
     <h1 class="titulo-centrado">SANAMED</h1>
@@ -22,34 +22,41 @@
     </div>
 
     <div class="container">
-        <h1 class="emociones" title="Emociones del día {{ fecha_seleccionada }}">Emociones del día {{ fecha_seleccionada }}</h1>
-        <div class="appointment-form" title="Formulario de citas">
+        <h1 class="emociones">Emociones del día {{ fecha_seleccionada }}</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="appointment-form">
             {% if mensaje %}
                 <p>{{ mensaje }}</p>
             {% else %}
                 <table class="emotion-table">
                     <thead>
                         <tr>
-                            <th class="emotion-title" title="Tipo de emoción">Emoción</th>
-                            <th class="hour-title" title="Hora de registro">Hora</th>
+                            <th>Hora</th>
+                            <th>Emoción</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for emocion, hora in emociones_horas %}
+                        {% for emocion in emociones %}
                             <tr class="emotion-row">
-                                <td>{{ emocion }}</td>
-                                <td>{{ hora }}</td>
+                                <td>{{ emocion.fecha_emocion.strftime('%H:%M') }}</td>
+                                <td>{{ emocion.emocion }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-
-                <!-- Botón para redirigir a la página de la gráfica -->
-            
+    
             {% endif %}
         </div>
         <form action="{{ url_for('ver_grafica', fecha=fecha_seleccionada) }}" method="get">
-            <button type="submit">Ver Gráfica de Emociones</button>
+            <button type="submit" class="form-submit">Ver Gráfica de Emociones</button>
         </form>
     </div>
 

@@ -49,6 +49,7 @@ class Consulta(db.Model):
     tratamiento = db.Column(db.Text)
     estado = db.Column(db.String(20), default='Pendiente')
 
+
 class Emocion(db.Model):
     __tablename__ = 'emociones'
     id_emocion = db.Column(db.Integer, primary_key=True)

@@ -30,7 +30,6 @@
         <!-- Canvas para la gráfica -->
         <canvas id="emotionChart"></canvas>
     </div>
-    <button onclick="goBack()" class="btn-volver">Volver al Calendario</button>
 
     <script>
         function goBack() {
@@ -46,42 +45,74 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('emotionChart').getContext('2d');
-
+    
             // Emociones y cantidades desde el backend
             const emociones = {{ emociones | tojson }};
             const cantidades = {{ cantidades | tojson }};
             
+            // Mapeo de colores para cada emoción
+            const coloresEmociones = {
+                'Feliz': ' #FFD700',      // Amarillo
+                'Calmado': '#B19CD9',    // Morado
+                'Relajado': '#48D1CC',    // Color original (verde azulado)
+                'Enojado': '#FF6B6B',     // Rojo
+                'Triste': '#87CEEB'       // Azul
+            };
+    
+            // Crear array de colores basado en las emociones
+            const backgroundColors = emociones.map(emocion => 
+                coloresEmociones[emocion] || 'rgba(201, 203, 207, 0.7)' // Color por defecto
+            );
+    
             // Crear el gráfico de barras
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: emociones, // etiquetas (emociones) en el eje X
+                    labels: emociones,
                     datasets: [{
                         label: 'Conteo de emociones',
-                        data: cantidades, // cantidad de cada emoción en el eje Y
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        data: cantidades,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors.map(color => color.replace('0.7', '1')),
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false // Ocultar la leyenda si lo prefieres
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         y: {
                             title: {
                                 display: true,
                                 text: 'Conteo',
                                 font: {
-                                    weight: 'bold' // Poner en negrilla el texto del eje Y
+                                    weight: 'bold',
+                                    size: 16
                                 }
                             },
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
                         },
                         x: {
                             title: {
                                 display: true,
                                 text: 'Emociones',
                                 font: {
-                                    weight: 'bold' // Poner en negrilla el texto del eje Y
+                                    weight: 'bold',
+                                    size: 16
                                 }
                             }
                         }

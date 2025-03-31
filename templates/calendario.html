@@ -30,14 +30,18 @@
         
         
         <!-- Formulario para seleccionar una fecha -->
-        <form action="/seleccionar_dia" method="post" class="appointment-form">
+        <form action="/seleccionar_dia" method="get" class="appointment-form">
            <!-- Mensajes y alertas -->
-            {% if mensaje %}
-            <div class="alert">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ mensaje }}
-            </div>
-            {% endif %}
+           {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
 
             <div class="container-111">
                 <label for="fecha" class="form-label" title="Seleccionar una fecha">Selecciona una fecha para ver tus emociones registradas:</label>

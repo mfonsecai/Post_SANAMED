@@ -1,5 +1,5 @@
 import re, random, psycopg2,secrets
-from datetime import datetime,date, timedelta
+from datetime import datetime,date, timedelta, time
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify,flash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
@@ -285,38 +285,37 @@ def logout():
 @app.route('/registro_emocion', methods=['POST'])
 @login_required
 def registro_emocion():
-    if 'logged_in' in session and session['logged_in']:
-        if request.method == 'POST':
-            # Obtener la emoción seleccionada por el usuario
-            emocion = request.form['emocion']
+    try:
+        # Verificar que el usuario esté logueado y sea un usuario normal
+        if 'id_usuario' not in session:
+            flash("Debes iniciar sesión como usuario para registrar emociones", "error")
+            return redirect(url_for('index'))
 
-            # Obtener el ID del usuario actualmente logueado
-            print("Contenido de la sesión:", session)  # Agregar esta impresión
-            id_usuario = obtener_id_usuario_actual()
-
-            # Obtener la fecha y hora actual
-            fecha_emocion = datetime.now()
-
-            # Crear una nueva emoción
-            nueva_emocion = Emocion(
-                id_usuario=id_usuario,
-                fecha_emocion=fecha_emocion,
-                emocion=emocion
-            )
-
-            # Insertar la emoción en la base de datos
-            try:
-                db.session.add(nueva_emocion)
-                db.session.commit()
-                flash("Emoción registrada correctamente.", "success")
-            except Exception as e:
-                db.session.rollback()
-                flash("Error al registrar la emoción.", "error")
-
-            # Redirigir al usuario de nuevo a la página de inicio
+        # Obtener datos del formulario
+        emocion = request.form.get('emocion')
+        if not emocion:
+            flash("No se recibió ninguna emoción", "error")
             return redirect(url_for('user_home'))
-    else:
-        return redirect(url_for('index'))
+
+        # Crear nueva emoción
+        nueva_emocion = Emocion(
+            id_usuario=session['id_usuario'],
+            emocion=emocion,
+            fecha_emocion=datetime.now()
+        )
+
+        # Guardar en la base de datos
+        db.session.add(nueva_emocion)
+        db.session.commit()
+        
+        flash(f"Emoción '{emocion}' registrada correctamente a las {datetime.now().strftime('%H:%M')}", "success")
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al guardar emoción: {str(e)}")  # Log para depuración
+        flash("Error técnico al registrar la emoción. Por favor intenta nuevamente.", "error")
+    
+    return redirect(url_for('user_home'))
     
 @app.route('/user_home')
 @login_required
@@ -407,9 +406,15 @@ def laberinto():
 # Función para obtener un ID de profesional aleatorio
 # Función para obtener profesionales disponibles
 def obtener_profesionales_disponibles():
-    profesionales = Profesional.query.with_entities(Profesional.id_profesional, Profesional.nombre, Profesional.especialidad).all()
-    return profesionales
-
+    # Devuelve todos los profesionales con sus nombres y especialidades
+    return Profesional.query.with_entities(
+        Profesional.id_profesional,
+        Profesional.nombre,
+        Profesional.especialidad
+    ).all()
+    
+def time_en_rango(hora, inicio, fin):
+    return inicio <= hora <= fin
 
 @app.route('/agendar_cita', methods=["GET", "POST"])
 @login_required
@@ -420,66 +425,66 @@ def agendar_cita():
             hora = request.form['hora']
             motivo = request.form['motivo']
             id_usuario = session['id_usuario']
+            id_profesional = request.form['profesional']
 
-            # Verificar si ya existe una cita para la fecha y hora seleccionadas
-            cita_existente = Consulta.query.filter_by(fecha_consulta=fecha, hora_consulta=hora).first()
-
-            # Validar que la fecha no sea anterior a la fecha actual
+            # Convertir formatos de fecha y hora
+            fecha_consulta = datetime.strptime(fecha, '%Y-%m-%d').date()
+            hora_24 = datetime.strptime(hora, '%I:%M %p').time()
             fecha_actual = date.today()
-            fecha_seleccionada = datetime.strptime(fecha, '%Y-%m-%d').date()
 
-            if fecha_seleccionada < fecha_actual:
-                error = "No puedes programar una cita en una fecha anterior a la fecha actual."
-                return render_template('agendar_cita.html', error=error, profesionales=obtener_profesionales_disponibles())
+            # Validación 1: Fecha no puede ser anterior a hoy
+            if fecha_consulta < fecha_actual:
+                flash("No puedes programar una cita en una fecha pasada.", "error")
+                return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
 
-            if cita_existente:
-                error = "Ya hay una cita programada para esa fecha y hora."
-                return render_template('agendar_cita.html', error=error, profesionales=obtener_profesionales_disponibles())
-            else:
-                # Convertir la hora AM/PM a un formato de 24 horas
-                hora_seleccionada = datetime.strptime(hora, '%I:%M %p').strftime('%H:%M')
+            # Validación 2: Horario laboral (8:00 - 17:00)
+            if hora_24 < time(8, 0) or hora_24 > time(17, 0):
+                flash("La hora debe estar entre 8:00 AM y 5:00 PM.", "error")
+                return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
 
-                hora_inicio = datetime.strptime('08:00', '%H:%M').time()
-                hora_fin = datetime.strptime('17:00', '%H:%M').time()
+            # Validación 3: Usuario no debe tener otra cita el mismo día
+            cita_usuario_mismo_dia = Consulta.query.filter(
+                Consulta.id_usuario == id_usuario,
+                Consulta.fecha_consulta == fecha_consulta
+            ).first()
+            
+            if cita_usuario_mismo_dia:
+                flash("Ya tienes una cita programada para este día.", "error")
+                return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
 
-                if hora_seleccionada < hora_inicio.strftime('%H:%M') or hora_seleccionada > hora_fin.strftime('%H:%M'):
-                    error = "La hora seleccionada está fuera del rango permitido (8:00 - 17:00)."
-                    return render_template('agendar_cita.html', error=error, profesionales=obtener_profesionales_disponibles())
+            # Validación 4: Profesional no debe tener cita a la misma hora
+            cita_profesional_misma_hora = Consulta.query.filter(
+                Consulta.id_profesional == id_profesional,
+                Consulta.fecha_consulta == fecha_consulta,
+                Consulta.hora_consulta == hora_24
+            ).first()
+            
+            if cita_profesional_misma_hora:
+                flash("El profesional ya tiene una cita programada para esta hora.", "error")
+                return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
 
-                id_profesional = request.form['profesional']
+            # Si pasa todas las validaciones, crear la cita
+            nueva_cita = Consulta(
+                id_usuario=id_usuario,
+                id_profesional=id_profesional,
+                fecha_consulta=fecha_consulta,
+                hora_consulta=hora_24,
+                motivo=motivo,
+                estado='Pendiente'
+            )
 
-                # Crear una nueva cita
-                nueva_cita = Consulta(
-                    id_usuario=id_usuario,
-                    id_profesional=id_profesional,
-                    fecha_consulta=fecha,
-                    hora_consulta=hora_seleccionada,
-                    motivo=motivo
-                )
+            try:
+                db.session.add(nueva_cita)
+                db.session.commit()
+                flash("Cita agendada exitosamente!", "success")
+            except Exception as e:
+                db.session.rollback()
+                flash(f"Error al agendar cita: {str(e)}", "error")
 
-                # Crear una nueva relación en Profesionales_Usuarios
-                nueva_relacion = ProfesionalUsuario(
-                    id_profesional=id_profesional,
-                    id_usuario=id_usuario
-                )
-
-                # Insertar la cita y la relación en la base de datos
-                try:
-                    db.session.add(nueva_cita)
-                    db.session.add(nueva_relacion)
-                    db.session.commit()
-                    success_message = "Su cita se ha registrado con éxito."
-                    return render_template('agendar_cita.html', success=success_message, profesionales=obtener_profesionales_disponibles())
-                except Exception as e:
-                    db.session.rollback()
-                    error = "Error al programar la cita: " + str(e)
-                    return render_template('agendar_cita.html', error=error, profesionales=obtener_profesionales_disponibles())
-
+        return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
     else:
         return redirect(url_for('index'))
-
-    return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
-
+    
 @app.route('/calendario')
 @login_required
 def mostrar_calendario():
@@ -514,13 +519,13 @@ def obtener_especialidad_profesional(id_profesional):
 
 
 def obtener_consultas_por_usuario(id_usuario):
-    consultas = Consulta.query.filter_by(id_usuario=id_usuario).with_entities(
-        Consulta.id_usuario,
-        Consulta.id_profesional,
-        Consulta.fecha_consulta,
-        Consulta.hora_consulta,
-        Consulta.motivo
-    ).all()
+    consultas = db.session.query(
+        Consulta.id_consulta,  # índice 0
+        Consulta.id_profesional,  # índice 1
+        Consulta.fecha_consulta,  # índice 2
+        Consulta.hora_consulta,  # índice 3
+        Consulta.motivo  # índice 4
+    ).filter_by(id_usuario=id_usuario).all()
     return consultas
 
 def obtener_nombre_profesional(id_profesional):
@@ -535,19 +540,38 @@ def obtener_conteo_emociones_por_fecha(fecha):
     conteo_emociones = dict(Counter(emociones))
     return conteo_emociones
 
-@app.route('/seleccionar_dia', methods=["GET", 'POST'])
+@app.route('/seleccionar_dia', methods=['GET'])
 @login_required
 def seleccionar_dia():
-    if request.method == 'POST':
-        fecha_seleccionada = request.form['fecha']
-        emociones, horas = obtener_emociones_por_fecha(fecha_seleccionada)
-        if not emociones:
-
-            mensaje = "No hay emociones registradas para este día."
-            return render_template('calendario.html', mensaje=mensaje)
-        return render_template('emociones.html', fecha_seleccionada=fecha_seleccionada, emociones_horas=zip(emociones, horas))
-    return redirect(url_for('mostrar_calendario'))  # Redirige a otra ruta
-
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('index'))
+    
+    fecha = request.args.get('fecha')  # Usar args para GET en lugar de form
+    
+    if not fecha:
+        return redirect(url_for('mostrar_calendario'))
+    
+    # Convertir la fecha de string a objeto date
+    try:
+        fecha_seleccionada = datetime.strptime(fecha, '%Y-%m-%d').date()
+    except ValueError:
+        flash("Formato de fecha inválido", "error")
+        return redirect(url_for('mostrar_calendario'))
+    
+    # Obtener emociones del usuario para esa fecha
+    emociones = Emocion.query.filter(
+        Emocion.id_usuario == session['id_usuario'],
+        db.func.date(Emocion.fecha_emocion) == fecha_seleccionada
+    ).all()
+    
+    if not emociones:
+        flash(f"No hay emociones registradas para el {fecha_seleccionada.strftime('%d/%m/%Y')}", "info")
+        return redirect(url_for('mostrar_calendario'))
+    
+    return render_template('emociones.html', 
+                         emociones=emociones,
+                         fecha_seleccionada=fecha_seleccionada)
+    
 @app.route('/ver_grafica/<fecha>')
 @login_required
 def ver_grafica(fecha):
@@ -569,23 +593,27 @@ def ver_grafica(fecha):
     )
 
 
-@app.route('/consultas_dia', methods=["GET", 'POST'])
+@app.route('/consultas_dia')
 @login_required
 def consultas_dia():
-    
-    
-    # Obtener el ID del usuario que está logueado (suponiendo que tienes una función para obtener el usuario actual)
-    id_usuario = obtener_id_usuario_actual()
+    if 'logged_in' not in session or not session['logged_in'] or 'id_usuario' not in session:
+        flash('Debes iniciar sesión para ver tus citas', 'error')
+        return redirect(url_for('index'))
 
-    # Obtener todas las consultas programadas para este usuario
-    consultas = obtener_consultas_por_usuario(id_usuario)
+    consultas = db.session.query(
+        Consulta.id_consulta,        # índice 0 (para eliminar)
+        Consulta.id_profesional,     # índice 1
+        Consulta.fecha_consulta,     # índice 2
+        Consulta.hora_consulta,      # índice 3
+        Consulta.motivo              # índice 4
+    ).filter_by(id_usuario=session['id_usuario']).all()
 
-    if not consultas:
-        mensaje = "No tienes citas programadas."
-        return render_template('consultas.html', mensaje=mensaje)
-
-    return render_template('consultas.html', fecha_seleccionada="Todas tus citas", consultas=consultas, obtener_nombre_profesional=obtener_nombre_profesional, obtener_especialidad_profesional=obtener_especialidad_profesional)
-
+    return render_template(
+        'consultas.html',
+        consultas=consultas,
+        obtener_nombre_profesional=obtener_nombre_profesional,
+        obtener_especialidad_profesional=obtener_especialidad_profesional
+    )
 @app.route('/profesionales')
 @login_required
 def listar_profesionales():
@@ -705,18 +733,30 @@ def eliminar_cita(id):
 @app.route('/eliminar_consulta/<int:id>', methods=['POST'])
 @login_required
 def eliminar_consulta(id):
+    if 'logged_in' not in session or not session['logged_in']:
+        flash('Debes iniciar sesión para realizar esta acción', 'error')
+        return redirect(url_for('index'))
+
     try:
-        consultas = Consulta.query.filter_by(id_usuario=id).all()
-        for consulta in consultas:
-            db.session.delete(consulta)
-        db.session.commit()
-        session['aviso_mostrado'] = True
-        flash('Consulta eliminada correctamente.', 'success')
+        # Buscar la consulta a eliminar
+        consulta = Consulta.query.get(id)
+        
+        if consulta:
+            # Verificar que el usuario es el dueño de la consulta
+            if 'id_usuario' in session and consulta.id_usuario == session['id_usuario']:
+                db.session.delete(consulta)
+                db.session.commit()
+                flash('La cita ha sido eliminada correctamente', 'success')
+            else:
+                flash('No tienes permiso para eliminar esta cita', 'error')
+        else:
+            flash('La cita no existe o ya fue eliminada', 'error')
+            
     except Exception as e:
         db.session.rollback()
-        flash('Error al eliminar la consulta: ' + str(e), 'error')
+        flash(f'Error al eliminar la cita: {str(e)}', 'error')
+    
     return redirect(url_for('consultas_dia'))
-
 @app.route('/pacientes')
 @login_required
 def pacientes():

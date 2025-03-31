@@ -25,18 +25,15 @@
         <h1 class="title" title="Formulario para agendar su cita">Agende su Cita</h1>
         
         <form action="/agendar_cita" method="POST" class="appointment-form">
-            {% if error %}
-            <div class="alert">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ error }}
-            </div>
-            {% endif %}
-            {% if success %}
-            <div class="alert success-alert">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ success }}
-            </div>
-            {% endif %}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
     
             <div class="form-group">
                 <label for="fecha" class="form-label" title="Fecha de su cita">Fecha:</label>
