@@ -813,22 +813,13 @@ def citas_asignadas():
         return redirect(url_for('index'))
 
 
-@app.route('/diagnosticos_tratamientos', methods=['GET', 'POST'])
+@app.route('/diagnosticos_tratamientos')
 @login_required
 def diagnosticos_tratamientos():
-    if 'logged_in' in session and session['logged_in']:
-        # Verifica el contenido de la sesión
-        print("Contenido de la sesión:", session)  # Depuración
+    if 'logged_in' in session and session['logged_in'] and 'id_profesional' in session:
+        id_profesional = session['id_profesional']
 
-        # Obtener el ID del profesional logueado
-        id_profesional = obtener_id_usuario_actual()
-        print("ID del profesional logueado:", id_profesional)  # Depuración
-
-        if id_profesional is None:
-            flash("No se pudo obtener el ID del profesional.", "error")
-            return redirect(url_for('index'))
-
-        # Obtener las consultas asignadas al profesional
+        # Consulta corregida para evitar duplicados
         consultas = db.session.query(
             Consulta.id_consulta,
             Usuario.numero_documento,
@@ -837,23 +828,15 @@ def diagnosticos_tratamientos():
             Consulta.motivo,
             Consulta.diagnostico,
             Consulta.tratamiento
-        ).join(Usuario, Consulta.id_usuario == Usuario.id_usuario) \
-         .join(ProfesionalUsuario, Consulta.id_profesional == ProfesionalUsuario.id_profesional) \
-         .filter(Consulta.fecha_consulta < datetime.now(), ProfesionalUsuario.id_profesional == id_profesional) \
-         .all()
+        ).join(Usuario, Consulta.id_usuario == Usuario.id_usuario
+        ).filter(
+            Consulta.id_profesional == id_profesional,
+            Consulta.fecha_consulta <= date.today()  # Solo citas pasadas o hoy
+        ).distinct().all()  # Añade .distinct() para eliminar duplicados
 
-        print("Consultas encontradas:", consultas)  # Depuración
-
-        # Si no hay consultas, mostrar un mensaje
-        if not consultas:
-            flash("No hay consultas asignadas.", "info")
-
-        # Renderizar la plantilla con las consultas
         return render_template('diagnosticos_tratamientos.html', consultas=consultas)
-    else:
-        # Si no está logueado, redirigir al index
-        return redirect(url_for('index'))
-        
+    
+    return redirect(url_for('index'))
 @app.route('/editar_diagnostico_tratamiento/<int:id_consulta>', methods=['POST'])
 @login_required
 def editar_diagnostico_tratamiento(id_consulta):
