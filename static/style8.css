@@ -88,28 +88,70 @@ h1 {
     margin: 20px 0;
 }
 
-
-
-.alert {
-    background-color: #8DCB9E;
-    color: white;
-    padding: 5px 3px;
-    font-size: 20px;
-    border: 10px solid #8DCB9E;
-    border-radius: 4px;
-    max-width: 90%;
-    position: relative;
-    margin: -30px auto;
-    margin-top: -10px;
+/* Estilos para los mensajes flash - Versión centrada */
+.flash-messages {
+  width: 100%;
+  text-align: center;
+  margin: 15px 0;
 }
 
-.closebtn {
-    color: white;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: -10px;
+.flash-message {
+  padding: 12px 25px;
+  margin: 10px auto;
+  border-radius: 25px;
+  color: white;
+  opacity: 0.95;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-size: 16px;
+  font-weight: 500;
+  display: inline-block;
+  max-width: 80%;
+  animation: fadeIn 0.5s, fadeOut 0.5s 4.5s;
+  animation-fill-mode: forwards;
+}
+
+/* Colores armonizados con tu diseño */
+.success {
+  background-color: #72da91; /* Mismo verde que tu botón de WhatsApp */
+  border-left: 5px solid #4CAF50;
+}
+
+.error {
+  background-color: #FF6B6B; /* Similar a tu color de "Enojado" */
+  border-left: 5px solid #dc3545;
+}
+
+.info {
+  background-color: #87CEEB; /* Similar a tu color de "Triste" */
+  color: #333;
+}
+
+.warning {
+  background-color: #FFD700; /* Similar a tu color de "Feliz" */
+  border-left: 5px solid #ffc107;
+  color: #333;
+}
+
+/* Animaciones suaves */
+@keyframes fadeIn {
+  from { 
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to { 
+      opacity: 0.95;
+      transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from { 
+      opacity: 0.95;
+  }
+  to { 
+      opacity: 0;
+      display: none;
+  }
 }
 
 @media (max-width: 480px) {

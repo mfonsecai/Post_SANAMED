@@ -21,21 +21,18 @@
 
             <img src="{{ url_for('static', filename='salud-mental1.jpg') }}" alt="Descripción de la imagen" title="Imagen ilustrativa sobre salud mental">
 
-            {% if error %}
-            <div class="alert" title="Credenciales incorrectas">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ error }}
-            </div>
-            {% endif %}
-
             <form action="/login" method="POST">
-                {% if mensaje %}
-                <div class="alert">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ mensaje }}
+                <div class="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="flash-message {{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
                 </div>
-                {% endif %}
-    
                 <div class="form-group">
                     <label for="rol" title="Rol"></label>
                     <select id="rol" name="rol" title="Rol con el que desea ingresar" required>

@@ -22,19 +22,20 @@
     </div>
 
     <div class="container"> 
-        <h1 class="title" title="Formulario para agendar su cita">Agende su Cita</h1>
         
+        <h1 class="title" title="Formulario para agendar su cita">Agende su Cita</h1>
         <form action="/agendar_cita" method="POST" class="appointment-form">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-    
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
             <div class="form-group">
                 <label for="fecha" class="form-label" title="Fecha de su cita">Fecha:</label>
                 <input type="date" id="fecha" name="fecha" required class="form-input" title="Seleccione la fecha de su cita">

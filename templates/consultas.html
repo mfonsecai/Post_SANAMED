@@ -6,25 +6,7 @@
     <title>Consultas del día {{ fecha_seleccionada }}</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='saludmental1.ico ') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style15.css') }}">
-    <style>
-        .confirmation-dialog {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-        }
-        .flash-message {
-            color: green;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-    </style>
+
 </head>
 <body>
     <h1 class="titulo-centrado">SANAMED</h1>
@@ -43,13 +25,17 @@
 
     <div class="container">
         <h1>Tus citas programadas</h1>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         <div class="appointment-form">
             <table class="table">          
                 <tr>
@@ -86,35 +72,42 @@
 
     <script>
         var appointmentIdToDelete;
+        var dialogOverlay;
     
         function showConfirmationDialog(appointmentId) {
             appointmentIdToDelete = appointmentId;
             const dialog = document.getElementById('confirmationDialog');
-            dialog.style.display = 'block';
             
-            // Añadir fondo oscuro
-            const overlay = document.createElement('div');
-            overlay.id = 'dialog-overlay';
-            overlay.style.position = 'fixed';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
-            overlay.style.zIndex = '9998';
-            document.body.appendChild(overlay);
+            // Crear o mostrar overlay
+            dialogOverlay = document.getElementById('dialog-overlay');
+            if (!dialogOverlay) {
+                dialogOverlay = document.createElement('div');
+                dialogOverlay.id = 'dialog-overlay';
+                document.body.appendChild(dialogOverlay);
+            }
+            
+            // Mostrar elementos
+            dialog.style.display = 'block';
+            dialogOverlay.style.display = 'block';
+            
+            // Cerrar al hacer clic fuera del diálogo
+            dialogOverlay.addEventListener('click', closeDialog);
         }
     
         function closeDialog() {
             document.getElementById('confirmationDialog').style.display = 'none';
-            const overlay = document.getElementById('dialog-overlay');
-            if (overlay) overlay.remove();
+            if (dialogOverlay) {
+                dialogOverlay.style.display = 'none';
+                dialogOverlay.removeEventListener('click', closeDialog);
+            }
         }
     
         function confirmDelete() {
             closeDialog();
-            const formId = 'eliminarForm' + appointmentIdToDelete;
-            document.getElementById(formId).submit();
+            if (appointmentIdToDelete) {
+                const formId = 'eliminarForm' + appointmentIdToDelete;
+                document.getElementById(formId).submit();
+            }
         }
     
         function cancelDelete() {

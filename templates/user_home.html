@@ -9,6 +9,7 @@
 </head>
 <body>
 
+
   <h1 class="titulo-centrado">SANAMED</h1>
   <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
   <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
@@ -18,30 +19,40 @@
       <div class="menu-dropdown" id="menu-dropdown">
           <a href="{{ url_for('configuracion') }}">Configuración</a>
           <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
-
       </div>
   </div>
 
   <div class="settings-v-1">
-    <div class="wrapper-"> <!-- Cambiado de container-8 a wrapper-8 -->
+    <div class="wrapper-">
         <div class="salud-mental-1" title="Imagen ilustrativa sobre salud mental"></div>
         <div class="frame-6">
             <span class="sanamed" title="SANAMED: Sanamed es un software de salud mental que ofrece una variedad de servicios y herramientas para mejorar el bienestar emocional y la salud mental de los usuarios."></span>
         </div>
     </div>  
-<div class="container"> <!-- Nuevo contenedor que abarca todo -->
-    
+    <div class="container">
         <div class="group-73" title="Estado emocional">
             <div class="how-are-you-feeling-today" title="¿Cómo te sientes hoy?">
                 ¿Cómo te sientes hoy?
             </div>
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
             <div class="group-81">
                 <div class="happy">
-                    <div class="wrapper-5"> <!-- Cambiado de container-5 a wrapper-5 -->
+                    <div class="wrapper-5">
                         <div class="happy-1">
                             <form action="/registro_emocion" method="POST">
                                 <input type="hidden" name="emocion" value="Feliz">
-                                <button type="submit" style="border: none; background: none; cursor: pointer;" title="Seleccionar Feliz">
+                                <button type="submit" class="emocion-button" title="Seleccionar Feliz">
                                     <img class="vector-7" src="static/Happy.png" alt="Icono de Feliz" />
                                 </button>
                             </form>
@@ -50,11 +61,11 @@
                     <span class="feliz" title="Feliz">Feliz</span>
                 </div>
                 <div class="calm">
-                    <div class="wrapper-4"> <!-- Cambiado de container-4 a wrapper-4 -->
+                    <div class="wrapper-4">
                         <div class="calm-1">
                             <form action="/registro_emocion" method="POST">
                                 <input type="hidden" name="emocion" value="Calmado">
-                                <button type="submit" style="border: none; background: none; cursor: pointer;" title="Seleccionar Calmado">
+                                <button type="submit" class="emocion-button" title="Seleccionar Calmado">
                                     <img class="vector-7" src="static/Calm - Icon.png" alt="Icono de Calmado" />
                                 </button>
                             </form>
@@ -63,11 +74,11 @@
                     <span class="calmado" title="Calmado">Calmado</span>
                 </div>
                 <div class="relax">
-                    <div class="wrapper-6"> <!-- Cambiado de container-6 a wrapper-6 -->
+                    <div class="wrapper-6">
                         <div class="relax-1">
                             <form action="/registro_emocion" method="POST">
                                 <input type="hidden" name="emocion" value="Relajado">
-                                <button type="submit" style="border: none; background: none; cursor: pointer;" title="Seleccionar Relajado">
+                                <button type="submit" class="emocion-button" title="Seleccionar Relajado">
                                     <img class="vector-7" src="static/Relax.png" alt="Icono de Relajado" />
                                 </button>
                             </form>
@@ -76,11 +87,11 @@
                     <span class="relajado" title="Relajado">Relajado</span>
                 </div>
                 <div class="focus">
-                    <div class="wrapper-7"> <!-- Cambiado de container-7 a wrapper-7 -->
+                    <div class="wrapper-7">
                         <div class="focus-1">
                             <form action="/registro_emocion" method="POST">
                                 <input type="hidden" name="emocion" value="Enojado">
-                                <button type="submit" style="border: none; background: none; cursor: pointer;" title="Seleccionar Enojado">
+                                <button type="submit" class="emocion-button" title="Seleccionar Enojado">
                                     <img class="vector-7" src="static/Vector.png" alt="Icono de Enojado" />
                                 </button>
                             </form>
@@ -89,11 +100,11 @@
                     <span class="enojado" title="Enojado">Enojado</span>
                 </div>
                 <div class="focus-mood">
-                    <div class="wrapper-8"> <!-- Cambiado de container-8 a wrapper-8 -->
+                    <div class="wrapper-8">
                         <div class="focus-mood-1">
                             <form action="/registro_emocion" method="POST">
                                 <input type="hidden" name="emocion" value="Triste">
-                                <button type="submit" style="border: none; background: none; cursor: pointer;" title="Seleccionar Triste">
+                                <button type="submit" class="emocion-button" title="Seleccionar Triste">
                                     <img class="vector-7" src="static/Vector.png" alt="Icono de Triste" />
                                 </button>
                             </form>
@@ -105,61 +116,52 @@
         </div>
     
         <div class="settings-v-1">
-          <div class="wrapper-2"> <!-- Cambiado de container-2 a wrapper-2 -->
-              <div class="frame-10">
-                  <div class="image-7">
-                      <img src="static/image 7.png" alt="Imagen 7" title="Música relajante">
+          <div class="wrapper-2">
+              <a href="https://open.spotify.com/playlist/5xXpUY3henFlcPt86jJrqh?si=c6880e4269eb4dd1" class="feature-card">
+                  <div class="frame-10">
+                      <div class="image-7">
+                          <img src="static/image 7.png" alt="Imagen 7" title="Música relajante">
+                      </div>
+                      <span class="musica-relajante" title="Música relajante">Música relajante</span>
                   </div>
-                  <span class="musica-relajante" title="Música relajante">
-                      <a href="https://open.spotify.com/playlist/5xXpUY3henFlcPt86jJrqh?si=c6880e4269eb4dd1">Música relajante</a>
-                  </span>
-              </div>
-              <div class="frame-12">
-                  <div class="image-8">
-                      <img src="static/image 8.png" alt="Imagen 8" title="Agendar cita">
+              </a>
+              <a href="/agendar_cita" class="feature-card">
+                  <div class="frame-12">
+                      <div class="image-8">
+                          <img src="static/image 8.png" alt="Imagen 8" title="Agendar cita">
+                      </div>
+                      <span class="terapia" title="Agendar Cita">Agendar Cita</span>
                   </div>
-                  <span class="terapia" title="Agendar Cita">
-                      <a href="/agendar_cita">Agendar Cita</a>
-                  </span>
-              </div>
+              </a>
           </div>
-          <div class="wrapper-3"> <!-- Cambiado de container-3 a wrapper-3 -->
-              <div class="frame-11">
-                  <div class="image-11">
-                      <img src="static/image 11 (1).png" alt="Imagen 11" title="Calendario">
+          <div class="wrapper-3">
+              <a href="/calendario" class="feature-card">
+                  <div class="frame-11">
+                      <div class="image-11">
+                          <img src="static/image 11 (1).png" alt="Imagen 11" title="Calendario">
+                      </div>
+                      <span class="calendario" title="Calendario">Calendario</span>
                   </div>
-                  <span class="calendario" title="Calendario">
-                      <a href="/calendario">Calendario</a>
-                  </span>
-              </div>
-              <div class="frame-14">
-                  <div class="image-10">
-                      <img src="static/image 10 (1).png" alt="Imagen 10" title="Herramientas y actividades">
+              </a>
+              <a href="{{ url_for('games') }}" class="feature-card">
+                  <div class="frame-14">
+                      <div class="image-10">
+                          <img src="static/image 10 (1).png" alt="Imagen 10" title="Herramientas y actividades">
+                      </div>
+                      <span class="herramientas-yactividades" title="Herramientas y actividades">Herramientas y actividades</span>
                   </div>
-                  <span class="herramientas-yactividades" title="Herramientas y actividades">
-                      <a href="{{ url_for('games') }}">Herramientas y actividades</a>
-                  </span>
-              </div>
+              </a>
           </div>
       </div>
       <div class="frame-13">
         <a href="https://wa.link/064lwr" target="_blank">
             <img src="static/wa.png" alt="Chatea con bot" title="Chatea con nosotros">
         </a>
-    </div>
-    
-      
-        <div class="wrapper-1"> <!-- Cambiado de container-1 a wrapper-1 -->
-           
-        </div>
+      </div>
     </div>
 </div>
 
 <script>
-
-
-//menu
-        
 document.addEventListener('DOMContentLoaded', function() {
     var menuToggle = document.getElementById('menu-toggle');
     var menuDropdown = document.getElementById('menu-dropdown');
@@ -177,9 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-
 </script>
 </body>
 </html>
-  

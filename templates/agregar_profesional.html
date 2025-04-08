@@ -24,13 +24,18 @@
     <div class="container">
         <h1>Agregar Profesional</h1>
         <div class="appointment-form">
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
 
-        {% if error %}
-        <div class="alert" title="La contraseña debe tener al menos 8 caracteres, una mayúscula y un carácter especial">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            {{ error }}
-        </div>
-        {% endif %}
         <form action="{{ url_for('agregar_profesional') }}" method="post">
             <div class="form-group">
                 <label for="nombre">Nombre:</label>

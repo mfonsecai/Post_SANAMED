@@ -14,7 +14,7 @@ body {
 
 .container {
     width: 1280px;
-    height: 730px;
+    height: 750px;
     margin: 60px auto;
     padding: 30px;
     background-color: white;
@@ -85,32 +85,66 @@ button:hover {
     background-color: green;
 }
 
-.alert {
-    background-color: #8DCB9E;
-    color: white;
-    padding: 2px;
-    border: 1px solid #8DCB9E;
-    border-radius: 4px;
-    max-width: 80%;
-    width: 400px;
-    position: relative;
-    margin:  auto;
-    font-size: 17px;
-    text-align: center;
+/* Mensajes Flash */
+.flash-messages {
+  width: 100%;
+  text-align: center;
+  margin: 5px 0;
 }
 
-.closebtn {
-    color: white;
-    position: absolute;
-    top: 0;
-    right: 10px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
+.flash-message {
+  padding: 9px 20px;
+  margin: 3px auto;
+  border-radius: 25px;
+  color: white;
+  opacity: 0.95;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+  max-width: 90%;
+  animation: fadeIn 0.5s, fadeOut 0.5s 4.5s;
+  animation-fill-mode: forwards;
 }
 
-.closebtn:hover {
-    color: black;
+.success {
+  background-color: #72da91;
+}
+
+.error {
+  background-color: #FF6B6B;
+}
+
+.info {
+  background-color: #87CEEB;
+  color: #333;
+}
+
+.warning {
+  background-color: #FFD700;
+  color: #333;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { 
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to { 
+      opacity: 0.95;
+      transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from { 
+      opacity: 0.95;
+  }
+  to { 
+      opacity: 0;
+      display: none;
+  }
 }
 
 
