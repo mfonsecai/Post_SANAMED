@@ -855,25 +855,36 @@ def eliminar_cita(id):
 @app.route('/pacientes')
 @login_required
 def pacientes():
-    if 'logged_in' in session and session['logged_in']:
-        id_profesional = obtener_id_usuario_actual()
-        print("ID del profesional logueado:", id_profesional)  # Verifica el ID
-
+    if 'logged_in' in session and session['logged_in'] and 'id_profesional' in session:
+        id_profesional = session['id_profesional']
+        
+        # Consulta similar a la de citas_asignadas pero agrupando por paciente
         pacientes = db.session.query(
             Usuario.nombre,
             Usuario.numero_documento,
             Usuario.celular,
             Usuario.correo
-        ).join(ProfesionalUsuario, Usuario.id_usuario == ProfesionalUsuario.id_usuario) \
-         .filter(ProfesionalUsuario.id_profesional == id_profesional) \
-         .all()
+        ).join(Consulta, Usuario.id_usuario == Consulta.id_usuario
+        ).filter(
+            Consulta.id_profesional == id_profesional
+        ).group_by(
+            Usuario.id_usuario
+        ).all()
 
-        print("Pacientes asociados al profesional:", pacientes)  # Verifica los datos
+        # Alternativa si usas ProfesionalUsuario (debe tener registros)
+        # pacientes = db.session.query(
+        #     Usuario.nombre,
+        #     Usuario.numero_documento,
+        #     Usuario.celular,
+        #     Usuario.correo
+        # ).join(ProfesionalUsuario, Usuario.id_usuario == ProfesionalUsuario.id_usuario
+        # ).filter(
+        #     ProfesionalUsuario.id_profesional == id_profesional
+        # ).all()
 
+        print("DEBUG - Pacientes encontrados:", pacientes)  # Para ver en consola
         return render_template('lista_pacientes.html', pacientes=pacientes)
-    else:
-        return redirect(url_for('index'))
-
+    return redirect(url_for('index'))
 # ==============================================
 # Rutas de configuración y perfil
 # ==============================================
