@@ -235,3 +235,58 @@ h1 {
   .show {
     display: block;
   }
+
+  /* Contenedor del encabezado */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+/* Botón de atrás */
+.boton-atras {
+  position: absolute;
+  left: 5px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  top: 2px;
+}
+
+.boton-atras:hover {
+  transform: scale(1.1);
+}
+
+.imagen-flecha {
+  width: 40px;
+  height: auto;
+}
+
+/* Ajustes para el título */
+.header-container h1 {
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-container {
+      justify-content: flex-start;
+      padding-left: 60px;
+  }
+  
+  .boton-atras {
+      left: 10px;
+  }
+  
+  .imagen-flecha {
+      width: 30px;
+  }
+  
+  .header-container h1 {
+      font-size: 1.8rem;
+      text-align: left;
+  }
+}

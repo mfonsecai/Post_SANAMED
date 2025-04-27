@@ -871,17 +871,6 @@ def pacientes():
             Usuario.id_usuario
         ).all()
 
-        # Alternativa si usas ProfesionalUsuario (debe tener registros)
-        # pacientes = db.session.query(
-        #     Usuario.nombre,
-        #     Usuario.numero_documento,
-        #     Usuario.celular,
-        #     Usuario.correo
-        # ).join(ProfesionalUsuario, Usuario.id_usuario == ProfesionalUsuario.id_usuario
-        # ).filter(
-        #     ProfesionalUsuario.id_profesional == id_profesional
-        # ).all()
-
         print("DEBUG - Pacientes encontrados:", pacientes)  # Para ver en consola
         return render_template('lista_pacientes.html', pacientes=pacientes)
     return redirect(url_for('index'))

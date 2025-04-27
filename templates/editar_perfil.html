@@ -20,7 +20,13 @@
     </div>
 
     <div class="container">
-        <h1 title="Editar perfil">Editar perfil</h1>
+        <div class="header-container">
+            <a href="javascript:history.back()" class="boton-atras">
+                <img src="static/atras.png" alt="Volver atrás" class="imagen-flecha">
+            </a>
+            <h1 title="Editar perfil">Editar perfil</h1>
+        </div>
+        
         <div class="flash-messages">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}

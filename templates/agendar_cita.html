@@ -21,7 +21,13 @@
     </div>
 
     <div class="container"> 
-        <h1 class="title" title="Formulario para agendar su cita">Agende su Cita</h1>
+        <div class="header-container">
+            <a href="javascript:history.back()" class="boton-atras">
+                <img src="static/atras.png" alt="Volver atrás" class="imagen-flecha">
+            </a>
+            <h1 class="title" title="Formulario para agendar su cita">Agende su Cita</h1>
+        </div>
+        
         <div class="form-wrapper">
             <!-- Formulario con ID explícito -->
             <form id="appointment-form" action="/agendar_cita" method="POST" class="appointment-form">
