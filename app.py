@@ -409,6 +409,8 @@ def time_en_rango(hora, inicio, fin):
 @login_required
 def agendar_cita():
     if 'logged_in' in session and session['logged_in']:
+        profesionales = obtener_profesionales_disponibles()
+        
         if request.method == "POST":
             fecha = request.form['fecha']
             hora = request.form['hora']
@@ -424,22 +426,22 @@ def agendar_cita():
             # Validación 1: Fecha no puede ser anterior a hoy
             if fecha_consulta < fecha_actual:
                 flash("No puedes programar una cita en una fecha pasada.", "error")
-                return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
+                return render_template('agendar_cita.html', profesionales=profesionales)
 
             # Validación 2: Horario laboral (8:00 - 17:00)
             if hora_24 < time(8, 0) or hora_24 > time(17, 0):
                 flash("La hora debe estar entre 8:00 AM y 5:00 PM.", "error")
-                return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
+                return render_template('agendar_cita.html', profesionales=profesionales)
 
-            # Validación 3: Usuario no debe tener otra cita el mismo día
-            cita_usuario_mismo_dia = Consulta.query.filter(
+            # Validación 3: No permitir que el usuario tenga más de 3 citas el mismo día (puedes ajustar este número)
+            citas_usuario_mismo_dia = Consulta.query.filter(
                 Consulta.id_usuario == id_usuario,
                 Consulta.fecha_consulta == fecha_consulta
-            ).first()
+            ).count()
             
-            if cita_usuario_mismo_dia:
-                flash("Ya tienes una cita programada para este día.", "error")
-                return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
+            if citas_usuario_mismo_dia >= 3:  # Límite de 3 citas por día
+                flash("Has alcanzado el límite de citas para este día (máximo 3).", "error")
+                return render_template('agendar_cita.html', profesionales=profesionales)
 
             # Validación 4: Profesional no debe tener cita a la misma hora
             cita_profesional_misma_hora = Consulta.query.filter(
@@ -450,7 +452,7 @@ def agendar_cita():
             
             if cita_profesional_misma_hora:
                 flash("El profesional ya tiene una cita programada para esta hora.", "error")
-                return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
+                return render_template('agendar_cita.html', profesionales=profesionales)
 
             # Si pasa todas las validaciones, crear la cita
             nueva_cita = Consulta(
@@ -470,9 +472,48 @@ def agendar_cita():
                 db.session.rollback()
                 flash(f"Error al agendar cita: {str(e)}", "error")
 
-        return render_template('agendar_cita.html', profesionales=obtener_profesionales_disponibles())
+        return render_template('agendar_cita.html', profesionales=profesionales)
     else:
         return redirect(url_for('index'))
+# Nueva ruta para obtener horarios disponibles
+@app.route('/obtener_horarios_disponibles', methods=['POST'])
+@login_required
+def obtener_horarios_disponibles():
+    data = request.get_json()
+    fecha = data.get('fecha')
+    id_profesional = data.get('profesional')
+    
+    if not fecha or not id_profesional:
+        return jsonify({'error': 'Datos incompletos'}), 400
+    
+    try:
+        fecha_consulta = datetime.strptime(fecha, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'error': 'Formato de fecha inválido'}), 400
+    
+    # Obtener todas las horas posibles
+    horas_posibles = [
+        '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+        '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
+    ]
+    
+    # Obtener citas ya agendadas para ese profesional en esa fecha
+    citas_agendadas = Consulta.query.filter(
+        Consulta.id_profesional == id_profesional,
+        Consulta.fecha_consulta == fecha_consulta
+    ).all()
+    
+    # Convertir horas agendadas al formato de 12 horas
+    horas_ocupadas = []
+    for cita in citas_agendadas:
+        hora_24 = cita.hora_consulta.strftime('%H:%M')
+        hora_12 = datetime.strptime(hora_24, '%H:%M').strftime('%I:%M %p')
+        horas_ocupadas.append(hora_12)
+    
+    # Filtrar horas disponibles
+    horas_disponibles = [hora for hora in horas_posibles if hora not in horas_ocupadas]
+    
+    return jsonify({'horas_disponibles': horas_disponibles})
     
 @app.route('/calendario')
 @login_required

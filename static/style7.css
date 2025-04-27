@@ -6,12 +6,12 @@
 
 body {
     font-family: Arial, sans-serif;
-    /*background-color: #3e4e3e;*/
     background: url("2392606046863777.jpeg") no-repeat center center fixed;
     background-size: cover;
     line-height: 1.6;
     position: center, absolute;
 }
+
 h1 {
     text-align: center;
     margin: 10px;
@@ -22,18 +22,21 @@ h1 {
 
 .container {
     width: 1280px;
-    height: 745px;
+    height: auto; /* Cambiado a auto para que se ajuste al contenido */
     margin: 60px auto;
     padding: 30px;
     background-color: white;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);position: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: center;
+}
+
+.form-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 .appointment-form {
-    max-width: 700px;
-    margin: auto;
-    height: 420px;
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 10px;
@@ -66,23 +69,20 @@ h1 {
     box-sizing: border-box;
 }
 
-.form-group-full {
-    margin-bottom: 15px;
+.form-textarea {
+    height: 70px;
+    resize: none;
+    font-family: "Releway", sans-serif;
 }
 
-.form-input-full,
-.form-select-full,
-.form-textarea-full {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
 }
 
-button {
-    margin-top: 20px;
+.form-submit {
     width: 300px;
     height: 60px;
     background-color: #8DCB9E;
@@ -96,17 +96,11 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+.form-submit:hover {
     background-color: darkgreen;
 }
 
-.button-container {
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    margin-top: 20px; /* Ajusta el espacio superior si es necesario */
-}
-
-/* Mensajes Flash */
+/* Resto de tus estilos existentes... */
 .flash-messages {
     width: 100%;
     text-align: center;
@@ -168,27 +162,7 @@ button:hover {
     }
 }
 
-
-#motivo {
-    height: 70px;
-    resize: none;
-    font-family: "Releway", sans-serif;
-}
-
-#motivo-label {
-    display: inline-block;
-    width: 100px;
-    text-align: left;
-    margin-top: 10px;
-    font-weight: bold;
-}
-
 @media (max-width: 480px) {
-    .alert {
-        width: 90%;
-        max-width: 90%;
-    }
-
     .form-group {
         flex-direction: column;
         align-items: flex-start;
@@ -204,60 +178,52 @@ button:hover {
     #motivo-label {
         width: 100%;
     }
+    
+    .container {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .form-submit {
+        width: 100%;
+    }
 }
 
-@media (max-width: 480px) {
-    body {
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden; /* Previene el desplazamiento */
-    } }
-
-  
-       
-
-  
-  .imagen-superior {
+/* Estilos para imágenes y menú */
+.imagen-superior {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 80px; /* Ajusta según el tamaño necesario */
-    object-fit: cover; /* Para que la imagen cubra toda el área */
-    z-index: -1; /* Para que el contenido esté por encima */
-  }
-  
-  
-  .imagen-esquina {
-    width: 60px; /* Tamaño pequeño */
+    height: 80px;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.imagen-esquina {
+    width: 60px;
     height: auto;
     position: fixed;
-    top: 14px; /* Ajusta según sea necesario */
-  }
-  
-  .izquierda {
-    left: 100px; /* Esquina superior izquierda */
-  }
-  
-  .derecha {
-    right: 100px; /* Esquina superior derecha */
-    
-  }
-  
-  
-  
-  .menu-container {
+    top: 14px;
+}
+
+.izquierda {
+    left: 100px;
+}
+
+.derecha {
+    right: 100px;
+}
+
+.menu-container {
     position: fixed;
     top: 0px;
     right: 10px;
     z-index: 1000;
     width: 60px;
-  }
-  
-  
-  
-  .menu-dropdown {
+}
+
+.menu-dropdown {
     display: none;
     position: absolute;
     right: 0;
@@ -266,19 +232,19 @@ button:hover {
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-  }
-  
-  .menu-dropdown a {
+}
+
+.menu-dropdown a {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
-  }
-  
-  .menu-dropdown a:hover {
+}
+
+.menu-dropdown a:hover {
     background-color: #f1f1f1;
-  }
-  
-  .show {
+}
+
+.show {
     display: block;
-  }
+}
