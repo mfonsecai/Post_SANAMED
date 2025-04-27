@@ -959,6 +959,84 @@ def preguntas_frecuentes():
     return render_template('preguntas_frecuentes.html')
 
 # ==============================================
+# juego del jardin 
+# ==============================================
+
+from extensions import db
+
+class FamiliasDeGratitud(db.Model):
+    __tablename__ = 'FamiliasDeGratitud'
+    id_gratitud = db.Column(db.Integer, primary_key=True)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('Usuarios.id_usuario'), nullable=False)
+    gratitud = db.Column(db.String, nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+
+    usuario = db.relationship('Usuario', backref=db.backref('familias_de_gratitud', lazy=True))
+
+    def __init__(self, gratitud, id_usuario):
+        self.gratitud = gratitud
+        self.id_usuario = id_usuario
+
+
+@app.route('/agregar_gratitud', methods=['POST'])
+def agregar_gratitud():
+    data = request.get_json()  # Recibimos los datos en formato JSON
+    print(f"Datos recibidos: {data}")  # Verifica los datos que llegan
+    
+    gratitud = data.get('gratitud')
+    id_usuario = data.get('id_usuario')
+
+    if gratitud and id_usuario:
+        # Guardar la gratitud en la base de datos
+        nueva_gratitud = FamiliasDeGratitud(gratitud=gratitud, id_usuario=id_usuario)
+        try:
+            db.session.add(nueva_gratitud)
+            db.session.commit()
+            print(f"Gratitud guardada: {nueva_gratitud}")
+            return jsonify({'message': 'Gratitud agregada exitosamente'}), 200
+        except Exception as e:
+            print(f"Error al guardar en la base de datos: {e}")
+            db.session.rollback()  # Revertir cambios en caso de error
+            return jsonify({'error': 'Error al guardar en la base de datos'}), 500
+    else:
+        print("Datos incompletos")
+        return jsonify({'error': 'Datos incompletos'}), 400
+
+
+
+
+@app.route('/eliminar_gratitud', methods=['DELETE'])
+def eliminar_gratitud():
+    data = request.get_json()
+    gratitud = data.get('gratitud')
+    id_usuario = data.get('id_usuario')
+
+    if not gratitud or not id_usuario:
+        return jsonify({'error': 'Faltan datos'}), 400
+
+    # Eliminar la gratitud de la base de datos
+    flor = FamiliasDeGratitud.query.filter_by(gratitud=gratitud, id_usuario=id_usuario).first()
+    if flor:
+        try:
+            db.session.delete(flor)
+            db.session.commit()
+            return jsonify({'message': 'Flor eliminada correctamente'}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+    else:
+        return jsonify({'error': 'Flor no encontrada'}), 404
+
+
+
+@app.route('/cargar_flores/<int:id_usuario>', methods=['GET'])
+def cargar_flores(id_usuario):
+    flores = FamiliasDeGratitud.query.filter_by(id_usuario=id_usuario).all()
+    gratitudes = [flor.gratitud for flor in flores]
+    return jsonify({'flores': gratitudes}), 200
+
+
+# ==============================================
 # Configuración adicional
 # ==============================================
 

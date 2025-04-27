@@ -284,3 +284,46 @@ select {
 .show {
   display: block;
 }
+
+
+/* Estilos para las flores */
+.flor {
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  display: inline-block;
+  border-radius: 50%;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.flor p {
+  margin: 0;
+  font-size: 14px;
+  color: white;
+}
+
+.eliminar-flor {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  font-size: 10px;
+  padding: 3px;
+  cursor: pointer;
+}
+
+/* Estilos para el jardín */
+#jardin {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Hacer que el mensaje de agradecimiento aparezca */
+.hidden {
+  display: none;
+}

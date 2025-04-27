@@ -120,19 +120,19 @@
     <div class="juego-cuadro hidden" id="jardin-gratitud">
         <h2>Jardín de Gratitud</h2>
         <p>Expresa y comparte cosas por las que estás agradecido. Añade un nuevo pensamiento de gratitud y mira cómo crece tu jardín.</p>
-        
+    
         <label for="input-gratitud">Escribe algo por lo que estés agradecido:</label>
         <input type="text" id="input-gratitud" placeholder="Ej. Mi familia, mi salud">
         <button id="agregar-gratitud">Añadir al jardín</button>
-        
+    
         <div id="jardin-contenido">
             <p>Tu jardín:</p>
             <div id="jardin"></div>
         </div>
-        
+    
         <div id="resultado-gratitud" class="hidden"></div>
     </div>
-</div> <!-- Fin del contenedor principal -->
+    
 
     <script>
         // Cargar los juegos desde la API
@@ -240,12 +240,14 @@
             iniciarTemporizador(20);
         
             document.getElementById('enviar-respuesta').addEventListener('click', function() {
-                const respuesta = document.getElementById('respuesta').value.toLowerCase().trim();
-                if (respuesta === retos[indiceReto].respuesta.toLowerCase()) {
+                const respuesta = document.getElementById('respuesta').value.trim().toLowerCase();
+                const respuestasCorrectas = retos[indiceReto].respuestas.map(r => r.toLowerCase());
+        
+                if (respuestasCorrectas.includes(respuesta)) {
                     puntaje++;
                     document.getElementById('resultado-pregunta').textContent = "¡Correcto!";
                 } else {
-                    document.getElementById('resultado-pregunta').textContent = `Incorrecto. La respuesta era: ${retos[indiceReto].respuesta}`;
+                    document.getElementById('resultado-pregunta').textContent = `Incorrecto. La respuesta correcta era: ${retos[indiceReto].respuestas.join(", ")}`;
                 }
                 document.getElementById('resultado-pregunta').classList.remove('hidden');
         
@@ -262,16 +264,24 @@
         
         function obtenerRetos(dificultad) {
             const retosFacil = [
-                { pregunta: "¿Cuál es el siguiente número en la secuencia: 2, 4, 6, 8...?", respuesta: "10" },
-                { pregunta: "Si un reloj marca las 3:00, ¿cuántos grados hay entre las manecillas?", respuesta: "90" },
+                { pregunta: "¿Cuál es el siguiente número en la secuencia: 2, 4, 6, 8...?", respuestas: ["10", "diez","DIEZ", "Diez"] },
+                { pregunta: "Si un reloj marca las 3:00, ¿cuántos grados hay entre las manecillas?", respuestas: ["90" , " NOVENTA" , "Noventa", "noventa"]  },
+                { pregunta: "¿Qué color resulta de mezclar rojo y azul?", respuestas: ["morado", "púrpura"] },
+                { pregunta: "¿Cuántos días tiene una semana?", respuestas: ["7" , "SIETE " , "SEVEN" , "Siete" ,"siete"] }
             ];
+        
             const retosIntermedio = [
-                { pregunta: "Resuelve: 8 + (3 × 4) - 5", respuesta: "15" },
-                { pregunta: "Si un tren viaja a 60 km/h, ¿cuánto tarda en recorrer 120 km?", respuesta: "2 horas" },
+                { pregunta: "Resuelve: 8 + (3 × 4) - 5", respuestas: ["15"] },
+                { pregunta: "Si un tren viaja a 60 km/h, ¿cuánto tarda en recorrer 120 km?", respuestas: ["2 horas", "2 horas"] },
+                { pregunta: "¿Cuántos segundos tiene una hora?", respuestas: ["3600"] },
+                { pregunta: "¿Cuánto es el área de un cuadrado de lado 5?", respuestas: ["25"] }
             ];
+        
             const retosDificil = [
-                { pregunta: "¿Cuál es el número primo más pequeño mayor que 100?", respuesta: "101" },
-                { pregunta: "¿Qué teorema establece que el cuadrado de la hipotenusa es igual a la suma de los cuadrados de los catetos?", respuesta: "Pitágoras" },
+                { pregunta: "¿Cuál es el número primo más pequeño mayor que 100?", respuestas: ["101"] },
+                { pregunta: "¿Qué teorema establece que el cuadrado de la hipotenusa es igual a la suma de los cuadrados de los catetos?", respuestas: ["Pitágoras"] },
+                { pregunta: "¿Cuánto es la raíz cuadrada de 144?", respuestas: ["12"] },
+                { pregunta: "¿En qué año llegó el hombre a la Luna?", respuestas: ["1969"] }
             ];
         
             if (dificultad === "facil") {
@@ -312,102 +322,207 @@
             document.getElementById('resultado-final').textContent = mensaje;
             document.getElementById('resultado-final').classList.remove('hidden');
         }
-
+        
         // juego respiracion 
-        document.getElementById('iniciar-respiracion').addEventListener('click', function() {
-            document.getElementById('respiracion-contenido').classList.remove('hidden');
-            iniciarTemporizadorRespiracion(300);
-            iniciarEjercicioRespiracion();
-        });
-        
-        function iniciarEjercicioRespiracion() {
-            const cicloRespiracion = [
-                { instruccion: "Inhala profundamente", duracion: 4 },
-                { instruccion: "Mantén la respiración", duracion: 4 },
-                { instruccion: "Exhala lentamente", duracion: 6 },
-            ];
-            
-            let indiceCiclo = 0;
-            ejecutarCiclo();
-        
-            function ejecutarCiclo() {
-                const { instruccion, duracion } = cicloRespiracion[indiceCiclo];
-                document.getElementById('instruccion-respiracion').textContent = instruccion;
-                animarCirculo(instruccion, duracion);
-        
-                setTimeout(() => {
-                    indiceCiclo = (indiceCiclo + 1) % cicloRespiracion.length;
-                    ejecutarCiclo();
-                }, duracion * 1000);
-            }
-        }
-        
-        function iniciarTemporizadorRespiracion(segundos) {
-            let tiempo = segundos;
-            const cuentaRegresiva = document.getElementById('tiempo-respiracion');
-        
-            const intervalo = setInterval(() => {
-                tiempo--;
-                cuentaRegresiva.textContent = tiempo;
-        
-                if (tiempo <= 0) {
-                    clearInterval(intervalo);
-                    document.getElementById('resultado-respiracion').textContent = "¡Ejercicio completado! Esperamos que te sientas más relajado.";
-                    document.getElementById('resultado-respiracion').classList.remove('hidden');
-                    document.getElementById('respiracion-contenido').classList.add('hidden');
-                }
-            }, 1000);
-        }
-        
-        function animarCirculo(instruccion, duracion) {
-            const circulo = document.getElementById('circulo-respiracion');
-            circulo.style.transition = `transform ${duracion}s ease-in-out`;
-            
-            if (instruccion === "Inhala profundamente") {
-                circulo.style.transform = "scale(1.5)";
-            } else if (instruccion === "Exhala lentamente") {
-                circulo.style.transform = "scale(0.8)";
-            } else {
-                circulo.style.transform = "scale(1)";
-            }
-        }
-        // juego jardin de gratitud 
+        // juego respiracion 
+document.getElementById('iniciar-respiracion').addEventListener('click', function() {
+    document.getElementById('respiracion-contenido').classList.remove('hidden');
+    iniciarTemporizadorRespiracion(180); // Establecemos el tiempo a 3 minutos (180 segundos)
+    iniciarEjercicioRespiracion();
+});
 
-        document.getElementById('agregar-gratitud').addEventListener('click', function() {
-            const gratitud = document.getElementById('input-gratitud').value.trim();
-            if (gratitud !== "") {
-                agregarFlorAlJardin(gratitud);
-                document.getElementById('input-gratitud').value = ""; // Limpiar el campo de entrada
-            } else {
-                alert("Por favor, escribe algo por lo que estés agradecido.");
-            }
-        });
-        
-        function agregarFlorAlJardin(gratitud) {
-            const jardin = document.getElementById('jardin');
-            const flor = document.createElement('div');
-            flor.className = 'flor';
-            
-            const textoFlor = document.createElement('p');
-            textoFlor.textContent = gratitud;
-            flor.appendChild(textoFlor);
-        
-            jardin.appendChild(flor);
-            
-            animarFlor(flor);
+function iniciarEjercicioRespiracion() {
+    const cicloRespiracion = [
+        { instruccion: "Inhala profundamente", duracion: 4 },
+        { instruccion: "Mantén la respiración", duracion: 4 },
+        { instruccion: "Exhala lentamente", duracion: 6 },
+    ];
+    
+    let indiceCiclo = 0;
+    ejecutarCiclo();
+
+    function ejecutarCiclo() {
+        const { instruccion, duracion } = cicloRespiracion[indiceCiclo];
+        document.getElementById('instruccion-respiracion').textContent = instruccion;
+        animarCirculo(instruccion, duracion);
+
+        setTimeout(() => {
+            indiceCiclo = (indiceCiclo + 1) % cicloRespiracion.length;
+            ejecutarCiclo();
+        }, duracion * 1000);
+    }
+}
+
+function iniciarTemporizadorRespiracion(segundos) {
+    let tiempo = segundos;
+    const cuentaRegresiva = document.getElementById('tiempo-respiracion');
+
+    const intervalo = setInterval(() => {
+        tiempo--;
+        cuentaRegresiva.textContent = tiempo;
+
+        if (tiempo <= 0) {
+            clearInterval(intervalo);
+            document.getElementById('resultado-respiracion').textContent = "¡Ejercicio completado! Esperamos que te sientas más relajado.";
+            document.getElementById('resultado-respiracion').classList.remove('hidden');
+            document.getElementById('respiracion-contenido').classList.add('hidden');
         }
-        
-        function animarFlor(flor) {
-            flor.style.opacity = 0;
-            flor.style.transform = "scale(0.5)";
-            
-            setTimeout(() => {
-                flor.style.transition = "all 1s ease";
-                flor.style.opacity = 1;
-                flor.style.transform = "scale(1)";
-            }, 100);
-            
+    }, 1000);
+}
+
+function animarCirculo(instruccion, duracion) {
+    const circulo = document.getElementById('circulo-respiracion');
+    circulo.style.transition = `transform ${duracion}s ease-in-out`;
+
+    if (instruccion === "Inhala profundamente") {
+        circulo.style.transform = "scale(1.5)";
+    } else if (instruccion === "Exhala lentamente") {
+        circulo.style.transform = "scale(0.8)";
+    } else {
+        circulo.style.transform = "scale(1)";
+    }
+}
+
+    // Cuando el usuario hace clic en el botón "Añadir al jardín"
+document.getElementById('agregar-gratitud').addEventListener('click', function() {
+    const gratitud = document.getElementById('input-gratitud').value.trim();
+    if (gratitud !== "") {
+        // Guardar la gratitud en la base de datos (enviar al backend)
+        guardarGratitudEnBaseDeDatos(gratitud);
+    
+        // Agregar la flor visualmente al jardín
+        agregarFlorAlJardin(gratitud);
+    
+        // Limpiar el campo de entrada
+        document.getElementById('input-gratitud').value = ""; 
+    } else {
+        alert("Por favor, escribe algo por lo que estés agradecido.");
+    }
+});
+
+// Función para agregar una flor visualmente al jardín
+function agregarFlorAlJardin(gratitud) {
+    const jardin = document.getElementById('jardin');
+    const flor = document.createElement('div');
+    flor.className = 'flor';
+    
+    // Asignar un color aleatorio a la flor
+    flor.style.backgroundColor = obtenerColorAleatorio();
+    
+    const textoFlor = document.createElement('p');
+    textoFlor.textContent = gratitud;
+    flor.appendChild(textoFlor);
+
+    // Botón para eliminar la flor
+    const botonEliminar = document.createElement('button');
+    botonEliminar.textContent = "Eliminar Flor";
+    botonEliminar.className = "eliminar-flor";
+    botonEliminar.addEventListener('click', function() {
+        jardin.removeChild(flor);
+        eliminarFlorDeBaseDeDatos(gratitud);  // Eliminar también de la base de datos
+    });
+    flor.appendChild(botonEliminar);
+    
+    jardin.appendChild(flor);
+    
+    // Animar la flor
+    animarFlor(flor);
+}
+
+// Función para animar la flor cuando se agrega
+function animarFlor(flor) {
+    flor.style.opacity = 0;
+    flor.style.transform = "scale(0.5)";
+    
+    setTimeout(() => {
+        flor.style.transition = "all 1s ease";
+        flor.style.opacity = 1;
+        flor.style.transform = "scale(1)";
+    }, 100);
+}
+
+// Función para obtener un color aleatorio para la flor
+function obtenerColorAleatorio() {
+    const colores = ['#FF5733', '#33FF57', '#5733FF', '#F33FF5', '#33FFF5', '#F5FF33'];
+    const indiceAleatorio = Math.floor(Math.random() * colores.length);
+    return colores[indiceAleatorio];
+}
+
+// Guardar la gratitud en la base de datos
+function guardarGratitudEnBaseDeDatos(gratitud) {
+    const idUsuario = 1;  // Cambia esto por el ID del usuario logueado (debes obtenerlo dinámicamente)
+
+    fetch('/agregar_gratitud', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            gratitud: gratitud,
+            id_usuario: idUsuario
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            console.log(data.message);
+        } else if (data.error) {
+            console.error('Error:', data.error);
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// Eliminar la flor de la base de datos
+function eliminarFlorDeBaseDeDatos(gratitud) {
+    const idUsuario = 1;  // Cambia esto por el ID del usuario logueado
+
+    fetch('/eliminar_gratitud', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            gratitud: gratitud,
+            id_usuario: idUsuario
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            console.log(data.message);
+        } else if (data.error) {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// Cargar flores desde la base de datos cuando la página se carga
+document.addEventListener('DOMContentLoaded', cargarFloresDesdeBaseDeDatos);
+
+function cargarFloresDesdeBaseDeDatos() {
+    const idUsuario = 1;  // Cambia esto por el ID del usuario logueado
+    
+    fetch(`/cargar_flores/${idUsuario}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.flores) {
+            data.flores.forEach(gratitud => {
+                agregarFlorAlJardin(gratitud); // Agregar cada flor guardada
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error al cargar las flores:', error);
+    });
+}
+
+
         
         //menu
         

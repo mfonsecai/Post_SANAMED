@@ -17,3 +17,36 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Agrega más funcionalidades según sea necesario
 });
+
+
+document.getElementById('agregar-gratitud').addEventListener('click', function() {
+    const gratitud = document.getElementById('input-gratitud').value.trim();
+    const idUsuario = 1;  // Asegúrate de usar el id del usuario logueado
+
+    if (gratitud !== "") {
+        fetch('http://localhost:5000/agregar_gratitud', {  // Asegúrate de usar el puerto correcto
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                gratitud: gratitud,
+                id_usuario: idUsuario
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                agregarFlorAlJardin(gratitud);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    } else {
+        alert('Por favor, escribe algo por lo que estés agradecido.');
+    }
+});
