@@ -8,10 +8,10 @@
 <body>
     <h1 class="titulo-centrado">SANAMED</h1>
     <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
-    <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
+    <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquinai izquierda">
 
     <div class="menu-container">
-        <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
+        <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquinad derecha" id="menu-toggle">
         <div class="menu-dropdown" id="menu-dropdown">
             <a href="{{ url_for('user_home') }}">Home</a>
             <a href="{{ url_for('configuracion') }}">Configuración</a>
@@ -30,7 +30,15 @@
     
     <!-- Juego de Meditación -->
 <div id="meditacion" class="juego-cuadro hidden">
-    <h2>Juego de Meditación</h2>
+    <div class="header-container">
+
+        <a href="{{ url_for('games') }}"  class="boton-atras" title="Volver a Juegos">
+            <img src="{{ url_for('static', filename='atras.png') }}" alt="Volver-atras" class="imagen-flecha">
+
+        </a>
+        <h2>Meditación</h2>
+    </div>
+
     <p>Instrucciones: Este juego te guiará a través de un ejercicio de meditación. Elige la duración de tu meditación y presiona "Iniciar". Durante la meditación, puedes escuchar música relajante si lo deseas.</p>
     <label for="duracion">Elige la duración de la meditación:</label>
     <select id="duracion">
@@ -57,7 +65,12 @@
 
     <!-- Cuestionario de Autoevaluación -->
     <div id="cuestionario" class="juego-cuadro hidden">
-        <h2>Cuestionario de Autoevaluación</h2>
+        <div class="header-container">
+            <a href="{{ url_for('games') }}"  class="boton-atras" title="Volver a Juegos">
+                <img src="{{ url_for('static', filename='atras.png') }}" alt="Volver-atras" class="imagen-flecha">
+            </a>
+            <h2>Cuestionario de Autoevaluación</h2>
+        </div>
         <form id="form-cuestionario">
             <label for="respuesta1">¿Te sientes estresado hoy?</label><br>
             <input type="radio" name="respuesta1" value="si"> Sí<br>
@@ -74,7 +87,12 @@
 
     <!-- Desafío de Estrategia -->
     <div class="juego-cuadro hidden" id="desafio-estrategia">
-        <h2>Desafío de Estrategia</h2>
+        <div class="header-container">
+            <a href="{{ url_for('games') }}"  class="boton-atras" title="Volver a Juegos">
+                <img src="{{ url_for('static', filename='atras.png') }}" alt="Volver-atras" class="imagen-flecha">
+            </a>
+            <h2>Desafío de Estrategia</h2>
+        </div>
         <p>Desarrolla habilidades de pensamiento crítico y resolución de problemas.</p>
         
         <label for="dificultad">Selecciona la dificultad:</label>
@@ -101,10 +119,15 @@
 
     <!-- Juego de Respiración Profunda -->
     <div class="juego-cuadro hidden" id="juego-respiracion">
-        <h2>Juego de Respiración Profunda</h2>
+        <div class="header-container">
+            <a href="{{ url_for('games') }}"  class="boton-atras" title="Volver a Juegos">
+                <img src="{{ url_for('static', filename='atras.png') }}" alt="Volver-atras" class="imagen-flecha">
+            </a>
+            <h2>Respiración Profunda</h2>
+        </div>
         <p>Aprende técnicas de respiración para reducir la ansiedad. Sigue las instrucciones en pantalla para inhalar, exhalar y mantener la respiración.</p>
         
-        <button id="iniciar-respiracion">Iniciar Juego</button>
+        <button id="iniciar-respiracion">Iniciar</button>
         
         <div id="respiracion-contenido" class="hidden">
             <p id="instruccion-respiracion">Prepárate para comenzar...</p>
@@ -118,7 +141,12 @@
 
     <!-- Jardín de Gratitud -->
     <div class="juego-cuadro hidden" id="jardin-gratitud">
-        <h2>Jardín de Gratitud</h2>
+        <div class="header-container">
+            <a href="{{ url_for('games') }}"  class="boton-atras" title="Volver a Juegos">
+                <img src="{{ url_for('static', filename='atras.png') }}" alt="Volver-atras" class="imagen-flecha">
+            </a>
+            <h2>Jardín de Gratitud</h2>
+        </div>
         <p>Expresa y comparte cosas por las que estás agradecido. Añade un nuevo pensamiento de gratitud y mira cómo crece tu jardín.</p>
     
         <label for="input-gratitud">Escribe algo por lo que estés agradecido:</label>
@@ -159,7 +187,7 @@
         function jugar(id) {
             // Ocultar todos los juegos
             document.querySelectorAll('.juego-cuadro').forEach(cuadro => cuadro.classList.add('hidden'));
-            if (id === 1) { // Juego de Meditación
+            if (id === 1) { // Meditación
                 document.getElementById('meditacion').classList.remove('hidden');
                 document.getElementById('musica').addEventListener('change', function() {
                     document.getElementById('cancion').disabled = !this.checked;
@@ -542,7 +570,7 @@ function cargarGratitudesDesdeBaseDeDatos() {
             
                 // Cerrar el menú si se hace clic fuera de él
                 window.addEventListener('click', function(event) {
-                    if (!event.target.matches('.imagen-esquina')) {
+                    if (!event.target.matches('.imagen-esquinad')) {
                         if (menuDropdown.classList.contains('show')) {
                             menuDropdown.classList.remove('show');
                         }

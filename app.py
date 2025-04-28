@@ -43,7 +43,7 @@ bcrypt = Bcrypt(app)
 juegos = [
     {
         "id": 1,
-        "nombre": "Juego de Meditación",
+        "nombre": "Meditación",
         "descripcion": "Un juego que te guía a través de una serie de ejercicios de meditación.",
         "dificultad": "Fácil",
         "duracion": "10 minutos"
@@ -64,7 +64,7 @@ juegos = [
     },
     {
         "id": 4,
-        "nombre": "Juego de Respiración Profunda",
+        "nombre": "Respiración Profunda",
         "descripcion": "Aprende técnicas de respiración para reducir la ansiedad.",
         "dificultad": "Fácil",
         "duracion": "5 minutos"
@@ -404,11 +404,6 @@ def laberinto():
 
 def time_en_rango(hora, inicio, fin):
     return inicio <= hora <= fin
-
-
-# ==============================================
-# juego del jardin 
-# ==============================================
 
 
 
