@@ -19,10 +19,10 @@ body {
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-h1 {
+.titulo-centrado {
     text-align: center;
-    margin: 10px;
-    font-size: 2.5em;
+    margin: 10px 0;
+    font-size: clamp(2rem, 5vw, 2.5em); /* Tamaño responsive */
     color: #000000;
     font-family: "Jomhuria", serif;
 }
@@ -107,7 +107,6 @@ select::placeholder {
     text-decoration: none;
     font-weight: bold;
 }
-
 /* Header styling */
 .header {
     position: absolute;
@@ -203,16 +202,17 @@ select::placeholder {
     }
 }
 
+
 .imagen-superior {
-    width: 100%;
-    height: auto;
-    max-height: 100px;
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100px;
     object-fit: cover;
     z-index: -1;
-}
+    opacity: 0.7;
+} 
 
 .imagen-esquina {
     width: 60px;
