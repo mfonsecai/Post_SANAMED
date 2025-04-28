@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style25.css') }}">
 </head>
 <body>
-    <h1 class="titulo-centrado">Herramientas y actividades</h1>
+    <h1 class="titulo-centrado">SANAMED</h1>
     <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
     <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
 
@@ -24,8 +24,8 @@
 
    <!-- Contenedor principal para todos los juegos -->
 <div class="container" >
+    <h1 title="herramientas">Herramienas y Actividades</h1>
     <div id="juegos" class="juegos-container">
-        <!-- Los juegos se cargarán aquí dinámicamente -->
     </div>
     
     <!-- Juego de Meditación -->
@@ -122,12 +122,16 @@
         <p>Expresa y comparte cosas por las que estás agradecido. Añade un nuevo pensamiento de gratitud y mira cómo crece tu jardín.</p>
     
         <label for="input-gratitud">Escribe algo por lo que estés agradecido:</label>
-        <input type="text" id="input-gratitud" placeholder="Ej. Mi familia, mi salud">
-        <button id="agregar-gratitud">Añadir al jardín</button>
+        <div class="form-gratitud">
+            <textarea id="input-gratitud" placeholder="Escribe aquí lo que agradeces hoy..." rows="3"></textarea>
+            <button id="agregar-gratitud" class="btn-verde">Añadir Gratitud</button>
+        </div>
     
         <div id="jardin-contenido">
-            <p>Tu jardín:</p>
-            <div id="jardin"></div>
+            <h3>Tu Jardín de Gratitud</h3>
+            <div id="jardin">
+                <!-- Las flores se cargarán aquí -->
+            </div>
         </div>
     
         <div id="resultado-gratitud" class="hidden"></div>
@@ -383,43 +387,41 @@ function animarCirculo(instruccion, duracion) {
     }
 }
 
-    // Cuando el usuario hace clic en el botón "Añadir al jardín"
+// Cuando el usuario hace clic en el botón "Añadir al jardín"
 document.getElementById('agregar-gratitud').addEventListener('click', function() {
     const gratitud = document.getElementById('input-gratitud').value.trim();
-    if (gratitud !== "") {
-        // Guardar la gratitud en la base de datos (enviar al backend)
-        guardarGratitudEnBaseDeDatos(gratitud);
-    
-        // Agregar la flor visualmente al jardín
-        agregarFlorAlJardin(gratitud);
-    
-        // Limpiar el campo de entrada
-        document.getElementById('input-gratitud').value = ""; 
-    } else {
-        alert("Por favor, escribe algo por lo que estés agradecido.");
+    if (gratitud.length < 3) {
+        alert('Por favor escribe al menos 3 caracteres');
+        return;
     }
+    if (gratitud.length > 500) {
+        alert('Máximo 500 caracteres');
+        return;
+    }
+    guardarGratitudEnBaseDeDatos(gratitud);
 });
 
 // Función para agregar una flor visualmente al jardín
-function agregarFlorAlJardin(gratitud) {
+function agregarFlorAlJardin(gratitudData) {
     const jardin = document.getElementById('jardin');
     const flor = document.createElement('div');
     flor.className = 'flor';
+    flor.dataset.id = gratitudData.id; // Guardar el ID de la gratitud
     
     // Asignar un color aleatorio a la flor
     flor.style.backgroundColor = obtenerColorAleatorio();
     
     const textoFlor = document.createElement('p');
-    textoFlor.textContent = gratitud;
+    textoFlor.textContent = gratitudData.texto;
     flor.appendChild(textoFlor);
 
     // Botón para eliminar la flor
     const botonEliminar = document.createElement('button');
-    botonEliminar.textContent = "Eliminar Flor";
+    botonEliminar.textContent = "Eliminar";
     botonEliminar.className = "eliminar-flor";
     botonEliminar.addEventListener('click', function() {
+        eliminarFlorDeBaseDeDatos(gratitudData.id);
         jardin.removeChild(flor);
-        eliminarFlorDeBaseDeDatos(gratitud);  // Eliminar también de la base de datos
     });
     flor.appendChild(botonEliminar);
     
@@ -427,8 +429,8 @@ function agregarFlorAlJardin(gratitud) {
     
     // Animar la flor
     animarFlor(flor);
+    document.getElementById('input-gratitud').value = ''; // Limpiar el textarea
 }
-
 // Función para animar la flor cuando se agrega
 function animarFlor(flor) {
     flor.style.opacity = 0;
@@ -447,80 +449,84 @@ function obtenerColorAleatorio() {
     const indiceAleatorio = Math.floor(Math.random() * colores.length);
     return colores[indiceAleatorio];
 }
-
 // Guardar la gratitud en la base de datos
 function guardarGratitudEnBaseDeDatos(gratitud) {
-    const idUsuario = 1;  // Cambia esto por el ID del usuario logueado (debes obtenerlo dinámicamente)
-
     fetch('/agregar_gratitud', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            gratitud: gratitud,
-            id_usuario: idUsuario
-        })
+            gratitud: gratitud
+        }),
+        credentials: 'include' // Para incluir la cookie de sesión
     })
     .then(response => response.json())
     .then(data => {
-        if (data.message) {
-            console.log(data.message);
+        if (data.id_gratitud) {
+            agregarFlorAlJardin({
+                id: data.id_gratitud,
+                texto: gratitud,
+                fecha: new Date().toISOString()
+            });
         } else if (data.error) {
             console.error('Error:', data.error);
+            alert('Error al guardar: ' + data.error);
         }
     })
     .catch(error => {
         console.error('Error:', error);
+        alert('Error al conectar con el servidor');
     });
 }
 
 // Eliminar la flor de la base de datos
-function eliminarFlorDeBaseDeDatos(gratitud) {
-    const idUsuario = 1;  // Cambia esto por el ID del usuario logueado
-
-    fetch('/eliminar_gratitud', {
+function eliminarFlorDeBaseDeDatos(idGratitud) {
+    fetch(`/eliminar_gratitud/${idGratitud}`, {
         method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            gratitud: gratitud,
-            id_usuario: idUsuario
-        })
+        credentials: 'include' // Para incluir la cookie de sesión
     })
     .then(response => response.json())
     .then(data => {
-        if (data.message) {
-            console.log(data.message);
+        if (data.error) {
+            console.error('Error:', data.error);
+            alert('Error al eliminar: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al conectar con el servidor');
+    });
+}
+
+// Cargar gratitudes al iniciar la página
+document.addEventListener('DOMContentLoaded', function() {
+    cargarGratitudesDesdeBaseDeDatos();
+});
+
+function cargarGratitudesDesdeBaseDeDatos() {
+    fetch('/cargar_gratitudes', {
+        credentials: 'include' // Para incluir la cookie de sesión
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.gratitudes) {
+            data.gratitudes.forEach(gratitud => {
+                agregarFlorAlJardin({
+                    id: gratitud.id,
+                    texto: gratitud.texto,
+                    fecha: gratitud.fecha
+                });
+            });
         } else if (data.error) {
             console.error('Error:', data.error);
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Error al cargar las gratitudes:', error);
     });
 }
 
-// Cargar flores desde la base de datos cuando la página se carga
-document.addEventListener('DOMContentLoaded', cargarFloresDesdeBaseDeDatos);
-
-function cargarFloresDesdeBaseDeDatos() {
-    const idUsuario = 1;  // Cambia esto por el ID del usuario logueado
-    
-    fetch(`/cargar_flores/${idUsuario}`)
-    .then(response => response.json())
-    .then(data => {
-        if (data.flores) {
-            data.flores.forEach(gratitud => {
-                agregarFlorAlJardin(gratitud); // Agregar cada flor guardada
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error al cargar las flores:', error);
-    });
-}
 
 
         

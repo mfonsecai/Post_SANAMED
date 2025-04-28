@@ -29,6 +29,7 @@ class Profesional(db.Model):
     contrasena = db.Column(db.String(100), nullable=False)
     reset_token = db.Column(db.String(100), nullable=True)  # Token para restablecer contraseña
 
+
 class Administrador(db.Model):
     __tablename__ = 'administradores'
     id_administrador = db.Column(db.Integer, primary_key=True)
@@ -61,3 +62,16 @@ class ProfesionalUsuario(db.Model):
     __tablename__ = 'profesionales_usuarios'
     id_profesional = db.Column(db.Integer, db.ForeignKey('profesionales.id_profesional'), primary_key=True)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), primary_key=True)
+    
+    
+class FamiliaGratitud(db.Model):
+    __tablename__ = 'familias_gratitud'
+    id_gratitud = db.Column(db.Integer, primary_key=True)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=False)
+    gratitud = db.Column(db.String(500), nullable=False)  # Longitud adecuada para textos
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Índices para mejor performance
+    __table_args__ = (
+        db.Index('idx_familia_gratitud_usuario', 'id_usuario'),
+    )
