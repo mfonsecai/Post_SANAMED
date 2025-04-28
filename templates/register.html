@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,15 +10,16 @@
 <body>
     <h1 class="titulo-centrado">SANAMED</h1>
     <img src="static/rectangle 6.png" alt="Imagen Superior" class="imagen-superior">
-    <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquina izquierda">
-  
+    <img src="static/saludmental1.png" alt="Imagen Esquina Izquierda" class="imagen-esquinai izquierda">
+      
     <div class="menu-container">
-        <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquina derecha" id="menu-toggle">
-        <div class="menu-dropdown" id="menu-dropdown">
-            <a href="{{ url_for('index') }}">Inicio</a>
-  
+            <img src="static/saludmental1.png" alt="Imagen Esquina Derecha" class="imagen-esquinad derecha" id="menu-toggle">
+            <div class="menu-dropdown" id="menu-dropdown">
+                <a href="{{ url_for('index') }}">Inicio</a>
+            </div>
         </div>
     </div>
+    
     <div class="container">
         <div class="left-side">
             <h2>Registrarse</h2>
@@ -70,27 +72,23 @@
         </div>
     </div>
     <script>
-        //menu
-            
-                document.addEventListener('DOMContentLoaded', function() {
-                    var menuToggle = document.getElementById('menu-toggle');
-                    var menuDropdown = document.getElementById('menu-dropdown');
-                
-                    menuToggle.addEventListener('click', function() {
-                        menuDropdown.classList.toggle('show');
-                    });
-                
-                    // Cerrar el menú si se hace clic fuera de él
-                    window.addEventListener('click', function(event) {
-                        if (!event.target.matches('.imagen-esquina')) {
-                            if (menuDropdown.classList.contains('show')) {
-                                menuDropdown.classList.remove('show');
-                            }
-                        }
-                    });
-                });
-    
-            
-        </script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var menuToggle = document.getElementById('menu-toggle');
+            var menuDropdown = document.getElementById('menu-dropdown');
+        
+            menuToggle.addEventListener('click', function() {
+                menuDropdown.classList.toggle('show');
+            });
+        
+            // Cerrar el menú si se hace clic fuera de él
+            window.addEventListener('click', function(event) {
+                if (!event.target.matches('.imagen-esquinad') && !event.target.matches('.menu-dropdown a')) {
+                    if (menuDropdown.classList.contains('show')) {
+                        menuDropdown.classList.remove('show');
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
