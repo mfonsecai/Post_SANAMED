@@ -220,16 +220,16 @@ button:hover {
 }
 
 .imagen-superior {
-    width: 100%;
-    height: auto;
-    max-height: 100px;
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100px;
     object-fit: cover;
     z-index: -1;
-}
-
+    opacity: 0.7;
+  
+  }
 .imagen-esquina {
     width: 60px;
     height: auto;
